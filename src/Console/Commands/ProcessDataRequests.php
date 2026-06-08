@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class ProcessDataRequests extends Command
 {
     protected $signature = 'blogr-gdpr:process-requests';
+
     protected $description = 'Process pending data export/erasure requests';
 
     public function handle(): int
@@ -16,6 +17,7 @@ class ProcessDataRequests extends Command
 
         if ($pendingRequests->isEmpty()) {
             $this->info('No pending data requests to process.');
+
             return Command::SUCCESS;
         }
 

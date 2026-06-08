@@ -7,7 +7,7 @@ use Happytodev\BlogrGdpr\Models\GdprRequest;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
-    if (!Route::has('blog.feed')) {
+    if (! Route::has('blog.feed')) {
         Route::get('/feed', fn () => 'feed')->name('blog.feed');
     }
     config()->set('blogr-gdpr.consent_log.enabled', true);

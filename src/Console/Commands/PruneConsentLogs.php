@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 class PruneConsentLogs extends Command
 {
     protected $signature = 'blogr-gdpr:prune-logs';
+
     protected $description = 'Prune old consent logs based on retention_days config';
 
     public function handle(): int

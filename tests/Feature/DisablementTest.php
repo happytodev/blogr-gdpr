@@ -87,5 +87,3 @@ it('renders analytics consent HTML when extension is enabled and configured', fu
 
     expect($html)->toContain('blogr-gdpr-analytics-consent');
 });
-
-

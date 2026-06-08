@@ -2,6 +2,8 @@
 
 namespace Happytodev\BlogrGdpr\Tests;
 
+use Filament\Contracts\Plugin;
+use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\BlogrGdpr\BlogrGdprPlugin;
 
 it('can instantiate the plugin', function () {
@@ -46,10 +48,10 @@ it('has no dependencies', function () {
 
 it('is a filament plugin', function () {
     $plugin = app(BlogrGdprPlugin::class);
-    expect($plugin)->toBeInstanceOf(\Filament\Contracts\Plugin::class);
+    expect($plugin)->toBeInstanceOf(Plugin::class);
 });
 
 it('is a blogr extension', function () {
     $plugin = app(BlogrGdprPlugin::class);
-    expect($plugin)->toBeInstanceOf(\Happytodev\Blogr\Contracts\BlogrExtension::class);
+    expect($plugin)->toBeInstanceOf(BlogrExtension::class);
 });

@@ -7,7 +7,6 @@ use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -17,28 +16,28 @@ class BlogrGdprServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/blogr-gdpr.php', 'blogr-gdpr');
+        $this->mergeConfigFrom(__DIR__.'/../config/blogr-gdpr.php', 'blogr-gdpr');
 
         $this->app->singleton(BlogrGdprPlugin::class, fn () => new BlogrGdprPlugin);
     }
 
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'blogr-gdpr');
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'blogr-gdpr');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'blogr-gdpr');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'blogr-gdpr');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
         $this->publishes([
-            __DIR__ . '/../config/blogr-gdpr.php' => config_path('blogr-gdpr.php'),
+            __DIR__.'/../config/blogr-gdpr.php' => config_path('blogr-gdpr.php'),
         ], 'blogr-gdpr-config');
 
         $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/blogr-gdpr'),
+            __DIR__.'/../resources/views' => resource_path('views/vendor/blogr-gdpr'),
         ], 'blogr-gdpr-views');
 
         $this->publishes([
-            __DIR__ . '/../resources/lang' => $this->app->langPath('vendor/blogr-gdpr'),
+            __DIR__.'/../resources/lang' => $this->app->langPath('vendor/blogr-gdpr'),
         ], 'blogr-gdpr-lang');
 
         $this->registerExtensions();
@@ -58,11 +57,11 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
     protected function registerFilamentPages(): void
     {
-        if (!$this->isExtensionEnabled()) {
+        if (! $this->isExtensionEnabled()) {
             return;
         }
 
-        if (!class_exists(Filament::class)) {
+        if (! class_exists(Filament::class)) {
             return;
         }
 
@@ -72,7 +71,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
             return;
         }
 
-        if (!$panel) {
+        if (! $panel) {
             return;
         }
 
@@ -84,12 +83,12 @@ class BlogrGdprServiceProvider extends ServiceProvider
         );
 
         $slug = GdprSettings::getSlug($panel);
-        $path = trim($panel->getPath(), '/') . '/' . ltrim($slug, '/');
+        $path = trim($panel->getPath(), '/').'/'.ltrim($slug, '/');
         $middleware = array_merge($panel->getMiddleware(), $panel->getAuthMiddleware());
 
         Route::get($path, GdprSettings::class)
             ->middleware($middleware)
-            ->name('filament.' . $panel->getId() . '.pages.' . $slug);
+            ->name('filament.'.$panel->getId().'.pages.'.$slug);
     }
 
     protected function registerBladeStacks(): void
@@ -97,7 +96,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->registerDpoComposer();
 
         View::composer('blogr::layouts.blog', function ($view) {
-            if (!config('blogr-gdpr.enabled') || !$this->isExtensionEnabled()) {
+            if (! config('blogr-gdpr.enabled') || ! $this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -107,12 +106,12 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.analytics-tracker', function ($view) {
-            if (!config('blogr-gdpr.analytics_consent.enabled') || !$this->isExtensionEnabled()) {
+            if (! config('blogr-gdpr.analytics_consent.enabled') || ! $this->isExtensionEnabled()) {
                 return;
             }
             $providers = config('blogr-gdpr.analytics_consent.providers', []);
             $trackerProvider = config('blogr.analytics.provider');
-            if (empty($providers) || !in_array($trackerProvider, $providers, true)) {
+            if (empty($providers) || ! in_array($trackerProvider, $providers, true)) {
                 return;
             }
             $position = config('blogr-gdpr.analytics_consent.position', 'body');
@@ -130,7 +129,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.blocks.contact_form', function ($view) {
-            if (!config('blogr-gdpr.contact_consent.enabled') || !$this->isExtensionEnabled()) {
+            if (! config('blogr-gdpr.contact_consent.enabled') || ! $this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -140,7 +139,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.footer', function ($view) {
-            if (!config('blogr-gdpr.enabled') || !config('blogr-gdpr.privacy_policy.auto_create') || !$this->isExtensionEnabled()) {
+            if (! config('blogr-gdpr.enabled') || ! config('blogr-gdpr.privacy_policy.auto_create') || ! $this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -153,12 +152,12 @@ class BlogrGdprServiceProvider extends ServiceProvider
     protected function registerDpoComposer(): void
     {
         View::composer('blogr::cms.pages.default', function ($view) {
-            if (!$this->isExtensionEnabled()) {
+            if (! $this->isExtensionEnabled()) {
                 return;
             }
 
             $page = $view->page ?? null;
-            if (!$page || $page->slug !== 'privacy-policy') {
+            if (! $page || $page->slug !== 'privacy-policy') {
                 return;
             }
 
@@ -175,12 +174,12 @@ class BlogrGdprServiceProvider extends ServiceProvider
             $dpoEmail = config('blogr-gdpr.dpo.email', '');
             $dpoAddress = config('blogr-gdpr.dpo.address', '');
 
-            $dpoHtml = '<p><strong>' . e($dpoName) . '</strong>';
-            if (!empty($dpoEmail)) {
-                $dpoHtml .= '<br><a href="mailto:' . e($dpoEmail) . '">' . e($dpoEmail) . '</a>';
+            $dpoHtml = '<p><strong>'.e($dpoName).'</strong>';
+            if (! empty($dpoEmail)) {
+                $dpoHtml .= '<br><a href="mailto:'.e($dpoEmail).'">'.e($dpoEmail).'</a>';
             }
-            if (!empty($dpoAddress)) {
-                $dpoHtml .= '<br>' . nl2br(e($dpoAddress));
+            if (! empty($dpoAddress)) {
+                $dpoHtml .= '<br>'.nl2br(e($dpoAddress));
             }
             $dpoHtml .= '</p>';
 
@@ -203,11 +202,11 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
     protected function isExtensionEnabled(): bool
     {
-        if (!$this->app->has(\Happytodev\Blogr\Services\ExtensionRegistry::class)) {
+        if (! $this->app->has(ExtensionRegistry::class)) {
             return true;
         }
 
-        return $this->app->make(\Happytodev\Blogr\Services\ExtensionRegistry::class)->isEnabled('blogr-gdpr');
+        return $this->app->make(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
     }
 
     protected function registerCommands(): void
@@ -222,7 +221,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
     protected function autoCreatePrivacyPolicy(): void
     {
-        if (!config('blogr-gdpr.privacy_policy.auto_create')) {
+        if (! config('blogr-gdpr.privacy_policy.auto_create')) {
             return;
         }
 
@@ -232,11 +231,11 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 ['is_published' => true, 'is_draft' => false, 'template' => 'default']
             );
 
-            $dataDir = __DIR__ . '/../data/privacy-policy';
+            $dataDir = __DIR__.'/../data/privacy-policy';
             $configuredLocales = config('blogr.locales.available', ['en']);
             $fileLocales = [];
 
-            foreach (glob($dataDir . '/*.json') as $filePath) {
+            foreach (glob($dataDir.'/*.json') as $filePath) {
                 $locale = basename($filePath, '.json');
                 $fileLocales[] = $locale;
             }
@@ -244,13 +243,13 @@ class BlogrGdprServiceProvider extends ServiceProvider
             $locales = array_unique(array_merge($configuredLocales, $fileLocales));
 
             foreach ($locales as $locale) {
-                $dataPath = $dataDir . "/{$locale}.json";
-                if (!file_exists($dataPath)) {
+                $dataPath = $dataDir."/{$locale}.json";
+                if (! file_exists($dataPath)) {
                     continue;
                 }
 
                 $data = json_decode(file_get_contents($dataPath), true);
-                if (!$data) {
+                if (! $data) {
                     continue;
                 }
 
@@ -259,7 +258,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 $translation = $page->translations()->where('locale', $locale)->first();
 
                 if ($translation) {
-                    $hasOldContent = !empty($translation->content) && empty($translation->blocks);
+                    $hasOldContent = ! empty($translation->content) && empty($translation->blocks);
                     if ($hasOldContent) {
                         $translation->update([
                             'content' => null,
@@ -294,7 +293,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 continue;
             }
 
-            $sectionContent = '<h2>' . $section;
+            $sectionContent = '<h2>'.$section;
 
             $blocks[] = [
                 'type' => 'content',

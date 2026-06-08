@@ -2,22 +2,24 @@
 
 namespace Happytodev\BlogrGdpr\Filament\Pages;
 
-use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Section;
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 
 class GdprSettings extends Page
 {
     use InteractsWithForms;
-    protected static string | \UnitEnum | null $navigationGroup = 'GDPR';
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-shield-check';
+    protected static string|\UnitEnum|null $navigationGroup = 'GDPR';
+
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shield-check';
 
     protected static ?string $title = 'GDPR Settings';
 
@@ -25,21 +27,31 @@ class GdprSettings extends Page
 
     // Cookie consent settings
     public bool $cookie_consent_enabled = true;
+
     public bool $cookie_consent_required = true;
+
     public string $cookie_consent_position = 'bottom';
+
     public string $cookie_consent_theme = 'dark';
+
     public string $cookie_info_url = '';
+
     public bool $cookie_categories_essential_required = true;
+
     public bool $cookie_categories_analytics_required = false;
+
     public bool $cookie_categories_marketing_required = false;
 
     // Analytics consent settings
     public bool $analytics_consent_enabled = true;
+
     public bool $analytics_consent_required = true;
+
     public string $analytics_consent_position = 'body';
 
     // Contact consent settings
     public bool $contact_consent_enabled = true;
+
     public bool $contact_consent_required = true;
 
     // Privacy policy settings
@@ -47,15 +59,19 @@ class GdprSettings extends Page
 
     // DPO settings
     public string $dpo_name = '';
+
     public string $dpo_email = '';
+
     public string $dpo_address = '';
 
     // Data export/erasure settings
     public bool $data_export_enabled = true;
+
     public bool $data_erasure_enabled = true;
 
     // Consent log settings
     public bool $consent_log_enabled = true;
+
     public int $consent_log_retention_days = 365;
 
     public static function getNavigationIcon(): ?string
@@ -114,103 +130,103 @@ class GdprSettings extends Page
     public function getFormSchema(): array
     {
         return [
-                Section::make('Cookie Consent Banner')
-                    ->schema([
-                        Toggle::make('cookie_consent_enabled')
-                            ->label('Enable cookie consent banner')
-                            ->live(),
-                        Toggle::make('cookie_consent_required')
-                            ->label('Require cookie consent')
-                            ->visible(fn () => $this->cookie_consent_enabled)
-                            ->live(),
-                        Select::make('cookie_consent_position')
-                            ->label('Banner position')
-                            ->options([
-                                'bottom' => 'Bottom',
-                                'top' => 'Top',
-                            ])
-                            ->visible(fn () => $this->cookie_consent_enabled),
-                        Select::make('cookie_consent_theme')
-                            ->label('Banner theme')
-                            ->options([
-                                'dark' => 'Dark',
-                                'light' => 'Light',
-                            ])
-                            ->visible(fn () => $this->cookie_consent_enabled),
-                        TextInput::make('cookie_info_url')
-                            ->label('Privacy info URL (optional)')
-                            ->url()
-                            ->visible(fn () => $this->cookie_consent_enabled),
-                        Section::make('Cookie Categories')
-                            ->schema([
-                                Toggle::make('cookie_categories_essential_required')
-                                    ->label('Essential cookies required'),
-                                Toggle::make('cookie_categories_analytics_required')
-                                    ->label('Analytics cookies required'),
-                                Toggle::make('cookie_categories_marketing_required')
-                                    ->label('Marketing cookies required'),
-                            ])
-                            ->visible(fn () => $this->cookie_consent_enabled),
-                    ]),
+            Section::make('Cookie Consent Banner')
+                ->schema([
+                    Toggle::make('cookie_consent_enabled')
+                        ->label('Enable cookie consent banner')
+                        ->live(),
+                    Toggle::make('cookie_consent_required')
+                        ->label('Require cookie consent')
+                        ->visible(fn () => $this->cookie_consent_enabled)
+                        ->live(),
+                    Select::make('cookie_consent_position')
+                        ->label('Banner position')
+                        ->options([
+                            'bottom' => 'Bottom',
+                            'top' => 'Top',
+                        ])
+                        ->visible(fn () => $this->cookie_consent_enabled),
+                    Select::make('cookie_consent_theme')
+                        ->label('Banner theme')
+                        ->options([
+                            'dark' => 'Dark',
+                            'light' => 'Light',
+                        ])
+                        ->visible(fn () => $this->cookie_consent_enabled),
+                    TextInput::make('cookie_info_url')
+                        ->label('Privacy info URL (optional)')
+                        ->url()
+                        ->visible(fn () => $this->cookie_consent_enabled),
+                    Section::make('Cookie Categories')
+                        ->schema([
+                            Toggle::make('cookie_categories_essential_required')
+                                ->label('Essential cookies required'),
+                            Toggle::make('cookie_categories_analytics_required')
+                                ->label('Analytics cookies required'),
+                            Toggle::make('cookie_categories_marketing_required')
+                                ->label('Marketing cookies required'),
+                        ])
+                        ->visible(fn () => $this->cookie_consent_enabled),
+                ]),
 
-                Section::make('Analytics Consent')
-                    ->schema([
-                        Toggle::make('analytics_consent_enabled')
-                            ->label('Enable analytics consent gate'),
-                        Toggle::make('analytics_consent_required')
-                            ->label('Require analytics consent'),
-                        Select::make('analytics_consent_position')
-                            ->label('Consent position')
-                            ->options([
-                                'head' => 'In &lt;head&gt; (before scripts)',
-                                'body' => 'In body (after scripts)',
-                            ])
-                            ->visible(fn () => $this->analytics_consent_enabled),
-                    ]),
+            Section::make('Analytics Consent')
+                ->schema([
+                    Toggle::make('analytics_consent_enabled')
+                        ->label('Enable analytics consent gate'),
+                    Toggle::make('analytics_consent_required')
+                        ->label('Require analytics consent'),
+                    Select::make('analytics_consent_position')
+                        ->label('Consent position')
+                        ->options([
+                            'head' => 'In &lt;head&gt; (before scripts)',
+                            'body' => 'In body (after scripts)',
+                        ])
+                        ->visible(fn () => $this->analytics_consent_enabled),
+                ]),
 
-                Section::make('Contact Form Consent')
-                    ->schema([
-                        Toggle::make('contact_consent_enabled')
-                            ->label('Enable contact form consent checkbox'),
-                        Toggle::make('contact_consent_required')
-                            ->label('Require contact form consent'),
-                    ]),
+            Section::make('Contact Form Consent')
+                ->schema([
+                    Toggle::make('contact_consent_enabled')
+                        ->label('Enable contact form consent checkbox'),
+                    Toggle::make('contact_consent_required')
+                        ->label('Require contact form consent'),
+                ]),
 
-                Section::make('Privacy Policy Page')
-                    ->schema([
-                        Toggle::make('privacy_auto_create')
-                            ->label('Auto-create privacy policy page via CMS'),
-                    ]),
+            Section::make('Privacy Policy Page')
+                ->schema([
+                    Toggle::make('privacy_auto_create')
+                        ->label('Auto-create privacy policy page via CMS'),
+                ]),
 
-                Section::make('Data Protection Officer')
-                    ->schema([
-                        TextInput::make('dpo_name')
-                            ->label('DPO Name'),
-                        TextInput::make('dpo_email')
-                            ->label('DPO Email')
-                            ->email(),
-                        TextInput::make('dpo_address')
-                            ->label('DPO Address'),
-                    ]),
+            Section::make('Data Protection Officer')
+                ->schema([
+                    TextInput::make('dpo_name')
+                        ->label('DPO Name'),
+                    TextInput::make('dpo_email')
+                        ->label('DPO Email')
+                        ->email(),
+                    TextInput::make('dpo_address')
+                        ->label('DPO Address'),
+                ]),
 
-                Section::make('Data Export & Erasure')
-                    ->schema([
-                        Toggle::make('data_export_enabled')
-                            ->label('Enable data export requests'),
-                        Toggle::make('data_erasure_enabled')
-                            ->label('Enable data erasure requests'),
-                    ]),
+            Section::make('Data Export & Erasure')
+                ->schema([
+                    Toggle::make('data_export_enabled')
+                        ->label('Enable data export requests'),
+                    Toggle::make('data_erasure_enabled')
+                        ->label('Enable data erasure requests'),
+                ]),
 
-                Section::make('Consent Logging')
-                    ->schema([
-                        Toggle::make('consent_log_enabled')
-                            ->label('Enable consent logging'),
-                        TextInput::make('consent_log_retention_days')
-                            ->label('Log retention (days)')
-                            ->numeric()
-                            ->minValue(1),
-                    ]),
-            ];
+            Section::make('Consent Logging')
+                ->schema([
+                    Toggle::make('consent_log_enabled')
+                        ->label('Enable consent logging'),
+                    TextInput::make('consent_log_retention_days')
+                        ->label('Log retention (days)')
+                        ->numeric()
+                        ->minValue(1),
+                ]),
+        ];
     }
 
     public function save(): void
@@ -289,9 +305,10 @@ class GdprSettings extends Page
     private function updateConfigFile(array $data): void
     {
         if (app()->environment('testing')) {
-            foreach (\Illuminate\Support\Arr::dot($data) as $key => $value) {
+            foreach (Arr::dot($data) as $key => $value) {
                 config()->set("blogr-gdpr.{$key}", $value);
             }
+
             return;
         }
 
@@ -300,7 +317,7 @@ class GdprSettings extends Page
         $updatedConfig = array_merge($currentConfig, $data);
         $content = $this->generateConfigContent($updatedConfig);
 
-        if (!file_exists(dirname($configPath))) {
+        if (! file_exists(dirname($configPath))) {
             mkdir(dirname($configPath), 0755, true);
         }
 

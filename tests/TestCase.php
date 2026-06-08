@@ -21,7 +21,7 @@ class TestCase extends Orchestra
         $this->runGdprMigrations();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Happytodev\\BlogrGdpr\\Tests\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Happytodev\\BlogrGdpr\\Tests\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
@@ -51,7 +51,7 @@ class TestCase extends Orchestra
 
     protected function createViteManifest(): void
     {
-        $manifestPath = __DIR__ . '/../vendor/orchestra/testbench-core/laravel/public/build/manifest.json';
+        $manifestPath = __DIR__.'/../vendor/orchestra/testbench-core/laravel/public/build/manifest.json';
 
         if (! is_dir(dirname($manifestPath))) {
             mkdir(dirname($manifestPath), 0755, true);
@@ -92,7 +92,7 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        $app['config']->set('app.key', 'base64:' . base64_encode(random_bytes(32)));
+        $app['config']->set('app.key', 'base64:'.base64_encode(random_bytes(32)));
 
         $app['config']->set('blogr.locales', [
             'enabled' => false,

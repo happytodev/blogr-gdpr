@@ -3,7 +3,6 @@
 namespace Happytodev\BlogrGdpr\Services;
 
 use Happytodev\BlogrGdpr\Models\ConsentLog;
-use Illuminate\Http\Request;
 
 class ConsentService
 {
@@ -27,11 +26,11 @@ class ConsentService
 
     public function hasConsent(string $consentType): bool
     {
-        if (!config('blogr-gdpr.consent_log.enabled')) {
+        if (! config('blogr-gdpr.consent_log.enabled')) {
             return true;
         }
 
-        if (!session()->has("blogr_gdpr_consent_{$consentType}")) {
+        if (! session()->has("blogr_gdpr_consent_{$consentType}")) {
             return false;
         }
 

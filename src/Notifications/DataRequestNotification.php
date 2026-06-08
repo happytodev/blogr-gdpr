@@ -3,8 +3,8 @@
 namespace Happytodev\BlogrGdpr\Notifications;
 
 use Happytodev\BlogrGdpr\Models\GdprRequest;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class DataRequestNotification extends Notification
 {

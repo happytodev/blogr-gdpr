@@ -2,10 +2,11 @@
 
 namespace Happytodev\BlogrGdpr\Tests\Feature;
 
+use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\BlogrGdprPlugin;
 
 it('registers the extension with the ExtensionRegistry', function () {
-    $registry = app(\Happytodev\Blogr\Services\ExtensionRegistry::class);
+    $registry = app(ExtensionRegistry::class);
     $extensions = $registry->getAll();
 
     $found = collect($extensions)->first(fn ($ext) => $ext instanceof BlogrGdprPlugin);

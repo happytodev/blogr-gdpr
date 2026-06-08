@@ -1,3 +1,5 @@
 <?php
 
-uses(Happytodev\BlogrGdpr\Tests\TestCase::class)->in('Feature');
+use Happytodev\BlogrGdpr\Tests\TestCase;
+
+uses(TestCase::class)->in('Feature');
