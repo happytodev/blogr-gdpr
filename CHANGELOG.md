@@ -2,6 +2,12 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.1.3 - 2026-06-08
+
+### 🎨 Style
+
+- **Pint code style**: Fixed 13 PHP code style issues across src and tests
+
 ## v1.1.2 - 2026-06-08
 
 ### 🔧 CI
