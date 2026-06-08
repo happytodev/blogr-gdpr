@@ -2,6 +2,12 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.1.4 - 2026-06-08
+
+### 📚 Docs
+
+- **Release skill**: Added preview step to release-manager workflow
+
 ## v1.1.3 - 2026-06-08
 
 ### 🎨 Style
