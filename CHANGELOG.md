@@ -2,6 +2,28 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.1.0 - 2026-06-08
+
+### ✨ Features
+
+- **Extension disable**: Added ExtensionRegistry integration for runtime disablement
+
+### 🧪 Tests
+
+- **Disablement tests**: Tests for extension enable/disable behavior
+
+### 🔧 CI
+
+- **GitHub Actions**: Tests workflow for PHP 8.3 & 8.4
+
+### 📚 Docs
+
+- **README**: Updated badges and description
+
+### 🔩 Chores
+
+- **OpenCode config**: Agent instructions and release-manager skill
+
 ## 1.0.0 - 2026-06-08
 
 ### ✨ Features
