@@ -58,6 +58,10 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
     protected function registerFilamentPages(): void
     {
+        if (!$this->isExtensionEnabled()) {
+            return;
+        }
+
         if (!class_exists(Filament::class)) {
             return;
         }
@@ -93,7 +97,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->registerDpoComposer();
 
         View::composer('blogr::layouts.blog', function ($view) {
-            if (!config('blogr-gdpr.enabled')) {
+            if (!config('blogr-gdpr.enabled') || !$this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -103,7 +107,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.analytics-tracker', function ($view) {
-            if (!config('blogr-gdpr.analytics_consent.enabled')) {
+            if (!config('blogr-gdpr.analytics_consent.enabled') || !$this->isExtensionEnabled()) {
                 return;
             }
             $providers = config('blogr-gdpr.analytics_consent.providers', []);
@@ -126,7 +130,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.blocks.contact_form', function ($view) {
-            if (!config('blogr-gdpr.contact_consent.enabled')) {
+            if (!config('blogr-gdpr.contact_consent.enabled') || !$this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -136,7 +140,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.footer', function ($view) {
-            if (!config('blogr-gdpr.enabled') || !config('blogr-gdpr.privacy_policy.auto_create')) {
+            if (!config('blogr-gdpr.enabled') || !config('blogr-gdpr.privacy_policy.auto_create') || !$this->isExtensionEnabled()) {
                 return;
             }
             $view->getFactory()->startPush(
@@ -149,6 +153,10 @@ class BlogrGdprServiceProvider extends ServiceProvider
     protected function registerDpoComposer(): void
     {
         View::composer('blogr::cms.pages.default', function ($view) {
+            if (!$this->isExtensionEnabled()) {
+                return;
+            }
+
             $page = $view->page ?? null;
             if (!$page || $page->slug !== 'privacy-policy') {
                 return;
@@ -191,6 +199,15 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
             $view->with('blocks', $blocks);
         });
+    }
+
+    protected function isExtensionEnabled(): bool
+    {
+        if (!$this->app->has(\Happytodev\Blogr\Services\ExtensionRegistry::class)) {
+            return true;
+        }
+
+        return $this->app->make(\Happytodev\Blogr\Services\ExtensionRegistry::class)->isEnabled('blogr-gdpr');
     }
 
     protected function registerCommands(): void
