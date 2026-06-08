@@ -4,6 +4,7 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/happytodev/blogr-gdpr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
 [![Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr-gdpr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr-gdpr/actions)
+[![Fix PHP code style](https://img.shields.io/github/actions/workflow/status/happytodev/blogr-gdpr/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/happytodev/blogr-gdpr/actions)
 [![PHP Version](https://img.shields.io/packagist/php-v/happytodev/blogr-gdpr?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
 [![Downloads](https://img.shields.io/packagist/dt/happytodev/blogr-gdpr?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
 [![GitHub Stars](https://img.shields.io/github/stars/happytodev/blogr-gdpr?style=flat-square)](https://github.com/happytodev/blogr-gdpr)
@@ -28,10 +29,22 @@ Cookie consent banner, privacy policy pages, data export & erasure requests, and
 - **Filament Admin** – Full GDPR settings page in the Filament admin panel
 - **Multilingual** – EN, FR, DE, ES translations included (extensible)
 
+## Requirements
+
+- PHP ^8.3
+- Blogr ^1.3
+
 ## Installation
 
 ```bash
 composer require happytodev/blogr-gdpr
+```
+
+Run the package migrations:
+
+```bash
+php artisan migrate:status
+php artisan migrate
 ```
 
 ## Configuration
