@@ -21,6 +21,9 @@ jobs:
           tools: composer:v2, pint
           coverage: none
 
+      - name: Remove local path repository
+        run: jq 'del(.repositories)' composer.json > composer.tmp.json && mv composer.tmp.json composer.json
+
       - name: Install dependencies
         run: composer update --no-interaction --prefer-dist
 
