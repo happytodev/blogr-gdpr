@@ -2,6 +2,12 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.1.2 - 2026-06-08
+
+### 🔧 CI
+
+- **Code style workflow**: Strip local path repository before installing dependencies
+
 ## v1.1.1 - 2026-06-08
 
 ### 🔧 CI
