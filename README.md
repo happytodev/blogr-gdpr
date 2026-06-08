@@ -4,7 +4,10 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/happytodev/blogr-gdpr.svg?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
 [![Tests](https://img.shields.io/github/actions/workflow/status/happytodev/blogr-gdpr/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/happytodev/blogr-gdpr/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PHP Version](https://img.shields.io/packagist/php-v/happytodev/blogr-gdpr?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
+[![Downloads](https://img.shields.io/packagist/dt/happytodev/blogr-gdpr?style=flat-square)](https://packagist.org/packages/happytodev/blogr-gdpr)
+[![GitHub Stars](https://img.shields.io/github/stars/happytodev/blogr-gdpr?style=flat-square)](https://github.com/happytodev/blogr-gdpr)
+[![License](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 **GDPR compliance plugin for Blogr CMS**
 
