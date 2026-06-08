@@ -1,0 +1,12 @@
+/vendor/
+/node_modules/
+/.env
+/.env.*
+!/.env.example
+/composer.lock
+/package-lock.json
+/yarn.lock
+.DS_Store
+Thumbs.db
+*.log
+.phpunit.result.cache

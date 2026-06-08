@@ -1,0 +1,53 @@
+{
+    "name": "happytodev/blogr-gdpr",
+    "type": "library",
+    "description": "GDPR compliance plugin for Blogr CMS - cookie consent, privacy, data export/erasure",
+    "keywords": ["blogr", "gdpr", "privacy", "cookie-consent", "filamentphp"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "HappyToDev",
+            "homepage": "https://github.com/happytodev"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../blogr"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "happytodev/blogr": "*",
+        "laravel/framework": "^12.0",
+        "filament/filament": "^4.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0",
+        "pestphp/pest": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Happytodev\\BlogrGdpr\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Happytodev\\BlogrGdpr\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Happytodev\\BlogrGdpr\\BlogrGdprServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
