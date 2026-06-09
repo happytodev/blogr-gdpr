@@ -2,6 +2,12 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.4.3 - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **CI tests**: Replaced fragile blog layout rendering tests with direct composer logic tests to eliminate parallel test pollution
+
 ## v1.4.2 - 2026-06-09
 
 ### 🐛 Bug Fixes
