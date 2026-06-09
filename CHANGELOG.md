@@ -2,6 +2,17 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.5.1 - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **URL fields**: Fixed data export and data erasure URL fields not displaying their value in GDPR settings
+- **Footer links**: Added "Upgrading" section in README with instructions to re-publish views and clear config cache after update if footer links don't appear
+
+### 📖 Documentation
+
+- **README**: Added upgrade guide with troubleshooting for missing footer links
+
 ## v1.5.0 - 2026-06-09
 
 ### ✨ Features

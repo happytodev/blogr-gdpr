@@ -67,6 +67,18 @@ Configure your DPO details in `config/blogr-gdpr.php`:
 
 The analytics consent gate is automatically enabled when you configure a provider in Blogr's analytics settings — no additional setup needed.
 
+## Upgrading
+
+After updating the package, re-publish assets to ensure footer links and views are up to date:
+
+```bash
+php artisan vendor:publish --tag=blogr-gdpr-views --force
+php artisan vendor:publish --tag=blogr-gdpr-config --force
+php artisan config:clear
+```
+
+> ⚠️ If footer links ("Request my data", "Request data deletion") don't appear after enabling them in GDPR Settings, re-publish the views and clear the config cache.
+
 ## Maintenance
 
 Prune expired consent log entries (recommended as a daily cron job):
