@@ -2,6 +2,26 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.4.0 - 2026-06-09
+
+### ✨ Features
+
+- **Unified cookie banner**: Single banner with embedded analytics consent — no more superposition
+- **Data request links**: "Request my data" and "Request data deletion" in footer with `show_public_link` toggle
+- **GDPR Settings help texts**: Every field now has detailed explanations in all languages
+- **Provider descriptions**: Pro/con displayed in banner and preferences modal
+- **Category descriptions**: "Example:" prefix for clarity (session, cart, etc.)
+- **Consent log categories**: New toggleable column showing which categories were accepted
+- **Cookie SVG icon**: Fun cookie illustration in the banner
+
+### 🐛 Bug Fixes
+
+- **Analytics gate reappearing**: Force-hide analytics gate when cookie banner is dismissed
+- **Marketing line missing**: Restored in banner layout
+- **bool type hints**: Removed strict type hints for PHP 8.4 compatibility
+- **consent_data.categories TypeError**: Fixed dot notation returning `true` instead of `?array`
+- **Cookie/analytics synchronization**: Modal preferences now sync with analytics consent state
+
 ## v1.3.0 - 2026-06-09
 
 ### ✨ Features
