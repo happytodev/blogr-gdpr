@@ -2,6 +2,23 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.2.0 - 2026-06-09
+
+### ✨ Features
+
+- **Admin resources**: Added Filament resources for GDPR Data Requests and Consent Logs with list/view/edit
+- **Manage preferences**: New link in footer opens the cookie preferences modal with analytics toggle
+- **Analytics provider guide**: Detailed comparison of Umami, GA, Plausible, and Matomo in config
+- **Extension disable**: Admin navigation dynamically hides GDPR items when extension is disabled
+
+### 🐛 Bug Fixes
+
+- **Livewire registration**: Explicitly register resource pages with Livewire to fix 419 errors
+- **Model table names**: Added `$table` to models to match migration table names
+- **Infolist display**: Replaced form components with TextEntry for proper data display on view pages
+- **Route registration**: Registered plugin via afterResolving to ensure resource routes are built
+- **Completed_at**: Auto-set when status changes to completed
+
 ## v1.1.4 - 2026-06-08
 
 ### 📚 Docs
