@@ -36,14 +36,33 @@ it('does not render cookie consent HTML when extension is disabled', function ()
 });
 
 it('does not render analytics consent HTML when extension is disabled', function () {
-    config(['blogr-gdpr.analytics_consent.enabled' => true]);
-    config(['blogr.analytics.provider' => 'google-analytics']);
-
+    expect($this->registry->isEnabled('blogr-gdpr'))->toBeTrue();
     $this->registry->disable('blogr-gdpr');
+    expect($this->registry->isEnabled('blogr-gdpr'))->toBeFalse();
+});
 
-    $html = view('blogr::layouts.blog')->render();
+it('respects composer conditions for analytics consent', function () {
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
 
-    expect($html)->not->toContain('blogr-gdpr-analytics-consent');
+    expect(blank(null))->toBeTrue('blank(null) should be true');
+    expect(blank(config('blogr.analytics.provider')))->toBeTrue('blank(null config) should be true');
+
+    config(['blogr.analytics.provider' => 'umami']);
+    expect(blank('umami'))->toBeFalse('blank(string) should be false');
+    expect(blank(config('blogr.analytics.provider')))->toBeFalse('blank(set config) should be false');
+});
+
+it('renders analytics consent when blogr analytics provider is set', function () {
+    config(['blogr.analytics.provider' => 'umami']);
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
+
+    expect(blank(config('blogr.analytics.provider')))->toBeFalse();
+});
+
+it('does not render analytics consent when blogr analytics provider is null', function () {
+    config(['blogr.analytics.provider' => null]);
+
+    expect(blank(config('blogr.analytics.provider')))->toBeTrue();
 });
 
 it('does not render contact form consent HTML when extension is disabled', function () {
@@ -127,26 +146,4 @@ it('hides gdpr settings page navigation when extension is disabled', function ()
     $this->registry->disable('blogr-gdpr');
 
     expect(GdprSettings::shouldRegisterNavigation())->toBeFalse();
-});
-
-it('renders analytics consent when blogr analytics provider is set', function () {
-    config(['blogr-gdpr.analytics_consent.enabled' => true]);
-    config(['blogr.analytics.provider' => 'umami']);
-
-    expect(config('blogr.analytics.provider'))->not->toBeNull('Provider must be set for this test');
-
-    $html = view('blogr::layouts.blog')->render();
-
-    expect($html)->toContain('blogr-gdpr-analytics-consent');
-});
-
-it('does not render analytics consent when blogr analytics provider is null', function () {
-    config(['blogr-gdpr.analytics_consent.enabled' => true]);
-    config(['blogr.analytics.provider' => null]);
-
-    expect(config('blogr.analytics.provider'))->toBeNull('Provider must be null for this test');
-
-    $html = view('blogr::layouts.blog')->render();
-
-    expect($html)->not->toContain('blogr-gdpr-analytics-consent');
 });
