@@ -3,7 +3,7 @@
 use Happytodev\BlogrGdpr\Http\Controllers\GdprController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web'])->group(function () {
+Route::middleware(['web', 'throttle:10,60'])->group(function () {
     Route::post('/gdpr/consent', [GdprController::class, 'storeConsent'])->name('gdpr.consent');
     Route::post('/gdpr/withdraw', [GdprController::class, 'withdrawConsent'])->name('gdpr.withdraw');
     Route::get('/gdpr/data-export', [GdprController::class, 'showDataExport'])->name('gdpr.data-export');

@@ -35,6 +35,11 @@ class GdprSettings extends Page
         return app(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
     }
 
+    public static function canAccess(): bool
+    {
+        return auth()->check();
+    }
+
     // Cookie consent settings
     public bool $cookie_consent_enabled = true;
 

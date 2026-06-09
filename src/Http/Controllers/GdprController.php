@@ -7,6 +7,7 @@ use Happytodev\BlogrGdpr\Notifications\DataRequestNotification;
 use Happytodev\BlogrGdpr\Services\ConsentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
@@ -17,6 +18,20 @@ class GdprController extends Controller
         protected ConsentService $consentService,
     ) {}
 
+    private function applySecurityHeaders(Response|RedirectResponse|View $response): mixed
+    {
+        if ($response instanceof View) {
+            return $response;
+        }
+
+        return $response->withHeaders([
+            'Content-Security-Policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options' => 'SAMEORIGIN',
+            'Referrer-Policy' => 'strict-origin-when-cross-origin',
+        ]);
+    }
+
     public function storeConsent(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -26,7 +41,7 @@ class GdprController extends Controller
 
         $this->consentService->giveConsent($validated['consent_type'], $validated['consent_data'] ?? []);
 
-        return back()->with('success', __('blogr-gdpr::messages.consent_stored'));
+        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_stored')));
     }
 
     public function withdrawConsent(Request $request): RedirectResponse
@@ -37,7 +52,7 @@ class GdprController extends Controller
 
         $this->consentService->withdrawConsent($validated['consent_type']);
 
-        return back()->with('success', __('blogr-gdpr::messages.consent_withdrawn'));
+        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_withdrawn')));
     }
 
     public function showDataExport(): View
@@ -59,7 +74,7 @@ class GdprController extends Controller
         Notification::route('mail', config('blogr-gdpr.dpo.email'))
             ->notify(new DataRequestNotification($requestRecord));
 
-        return back()->with('success', __('blogr-gdpr::messages.export_requested'));
+        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.export_requested')));
     }
 
     public function showDataErasure(): View
@@ -82,6 +97,6 @@ class GdprController extends Controller
         Notification::route('mail', config('blogr-gdpr.dpo.email'))
             ->notify(new DataRequestNotification($requestRecord));
 
-        return back()->with('success', __('blogr-gdpr::messages.erasure_requested'));
+        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.erasure_requested')));
     }
 }

@@ -35,6 +35,16 @@ class ConsentLogResource extends Resource
         return app(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->check();
+    }
+
+    public static function canView($record): bool
+    {
+        return auth()->check();
+    }
+
     public static function getModelLabel(): string
     {
         return 'Consent Log';

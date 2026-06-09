@@ -4,6 +4,8 @@ namespace Happytodev\BlogrGdpr\Tests\Feature;
 
 use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
+use Happytodev\BlogrGdpr\Notifications\DataRequestNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
@@ -89,4 +91,18 @@ it('logs consent to the database', function () {
         ]);
 
     expect(ConsentLog::where('consent_type', 'analytics')->where('consent_given', true)->exists())->toBeTrue();
+});
+
+it('sends notifications via the queue', function () {
+    $notification = new DataRequestNotification(new GdprRequest);
+    expect($notification)->toBeInstanceOf(ShouldQueue::class);
+});
+
+it('includes security headers in consent response', function () {
+    $response = $this->post(route('gdpr.consent'), [
+        'consent_type' => 'cookies',
+    ]);
+
+    $response->assertHeader('X-Content-Type-Options', 'nosniff');
+    $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
 });
