@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class GdprRequest extends Model
 {
+    protected $table = 'blogr_gdpr_requests';
+
     protected $fillable = [
         'email',
         'request_type',

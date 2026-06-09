@@ -5,6 +5,11 @@ namespace Happytodev\BlogrGdpr\Tests\Feature;
 use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
 
+it('uses correct table name from migration', function () {
+    expect((new ConsentLog)->getTable())->toBe('blogr_gdpr_consent_logs');
+    expect((new GdprRequest)->getTable())->toBe('blogr_gdpr_requests');
+});
+
 it('can create a consent log entry', function () {
     $log = ConsentLog::create([
         'email' => 'test@example.com',

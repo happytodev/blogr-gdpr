@@ -40,4 +40,7 @@ return [
     'data_request_email' => 'E-mail : :email',
     'data_request_type' => 'Type de demande : :type',
     'data_request_action' => 'Voir les demandes',
+    'manage_preferences' => 'Gérer mes préférences',
+    'analytics_tracking' => 'Suivi analytique',
+    'analytics_description' => 'Nous aide à comprendre comment les visiteurs interagissent avec notre site.',
 ];

@@ -1,5 +1,43 @@
 <?php
 
+/*
+ * Blogr GDPR – Analytics Provider Guide
+ * ---------------------------------------
+ * When you add a provider to the `providers` array below, the analytics
+ * consent gate will be shown to visitors so they can accept or decline
+ * tracking **before** the provider script loads.
+ *
+ * Overview of supported providers:
+ *
+ * ── Umami ──────────────────────────────────────────────────────────────
+ *   • Privacy-first, no cookies, no personal data collected
+ *   • Lightweight, real-time dashboard
+ *   • 🇪🇺 GDPR-compliant by design (can rely on legitimate interest)
+ *   • ─ Self-hosted or cloud
+ *   • ✗ Fewer advanced features than GA (no funnels, attribution, etc.)
+ *
+ * ── Google Analytics ───────────────────────────────────────────────────
+ *   • Powerful: segments, funnels, attribution, audiences
+ *   • Free tier available
+ *   • ─ Collects extensive browsing data, requires explicit consent
+ *   • ─ Uses cookies (GDPR consent needed), page-load overhead
+ *   • ─ Data hosted on US servers (Schrems II considerations)
+ *
+ * ── Plausible ──────────────────────────────────────────────────────────
+ *   • Lightweight, cookie-free, privacy-first
+ *   • 🇪🇺 GDPR-compliant by design (no consent required)
+ *   • Clean dashboard, great for content-driven sites
+ *   • ─ Self-hosted or cloud
+ *   • ✗ Less advanced than GA (no funnel analysis, native ecommerce)
+ *
+ * ── Matomo ─────────────────────────────────────────────────────────────
+ *   • Full-featured open-source alternative to GA
+ *   • Self-hosted → full data control, GDPR-compliant
+ *   • Ecommerce, funnels, heatmaps, session recordings
+ *   • ─ Requires a database; heavier to maintain
+ *   • ✗ Cloud version available but hosted externally
+ */
+
 return [
     'enabled' => env('BLOGR_GDPR_ENABLED', true),
 

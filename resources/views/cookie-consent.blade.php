@@ -6,6 +6,7 @@
     $textColor = $isDark ? '#e0e0e0' : '#333333';
     $borderColor = $isDark ? '#333' : '#e0e0e0';
     $categories = config('blogr-gdpr.cookie_consent.categories', []);
+    $showAnalyticsToggle = config('blogr-gdpr.analytics_consent.enabled') && count(config('blogr-gdpr.analytics_consent.providers', [])) > 0;
     $positionStyles = $position === 'bottom'
         ? 'bottom: 0; left: 0; right: 0; border-top: 1px solid ' . $borderColor . ';'
         : 'top: 0; left: 0; right: 0; border-bottom: 1px solid ' . $borderColor . ';';
@@ -57,6 +58,18 @@
         </div>
         @endforeach
 
+        @if($showAnalyticsToggle)
+        <div style="margin-bottom: 12px; padding: 12px; border-radius: 8px; border: 1px solid {{ $borderColor }};">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="blogr-gdpr-analytics-toggle" style="width: 16px; height: 16px;">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;">{{ __('blogr-gdpr::messages.analytics_tracking') }}</div>
+                    <div style="font-size: 12px; color: {{ $isDark ? '#aaa' : '#666' }};">{{ __('blogr-gdpr::messages.analytics_description') }}</div>
+                </div>
+            </label>
+        </div>
+        @endif
+
         <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid {{ $borderColor }}; padding-top: 16px;">
             <button onclick="blogrGdprCloseModal()" style="padding: 8px 20px; border: 1px solid {{ $isDark ? '#555' : '#ccc' }}; border-radius: 4px; cursor: pointer; background: transparent; color: inherit; font-size: 14px;">
                 {{ __('Cancel') }}
@@ -87,6 +100,28 @@ window.blogrGdprGetCookieCategories = function() {
         categories[cb.dataset.category] = cb.checked;
     });
     return categories;
+};
+
+window.blogrGdprLoadPreferences = function() {
+    var saved = localStorage.getItem('blogr_gdpr_cookie_categories');
+    if (saved) {
+        var categories = JSON.parse(saved);
+        document.querySelectorAll('.blogr-gdpr-cookie-category').forEach(function(cb) {
+            if (!cb.disabled) {
+                cb.checked = categories[cb.dataset.category] === true;
+            }
+        });
+    }
+    var analytics = localStorage.getItem('blogr_gdpr_analytics');
+    var toggle = document.getElementById('blogr-gdpr-analytics-toggle');
+    if (toggle) {
+        toggle.checked = analytics === 'accepted';
+    }
+};
+
+window.blogrGdprOpenPreferences = function() {
+    blogrGdprLoadPreferences();
+    document.getElementById('blogr-gdpr-cookie-modal').style.display = 'flex';
 };
 
 window.blogrGdprAcceptCookies = function() {
@@ -128,6 +163,7 @@ window.blogrGdprDeclineCookies = function() {
 };
 
 window.blogrGdprCustomizeCookies = function() {
+    blogrGdprLoadPreferences();
     document.getElementById('blogr-gdpr-cookie-modal').style.display = 'flex';
 };
 
@@ -152,6 +188,31 @@ window.blogrGdprSavePreferences = function() {
         },
         body: JSON.stringify({ consent_type: 'cookies', consent_data: { categories: categories } })
     });
+
+    var toggle = document.getElementById('blogr-gdpr-analytics-toggle');
+    if (toggle) {
+        var analyticsAccepted = toggle.checked;
+        localStorage.setItem('blogr_gdpr_analytics', analyticsAccepted ? 'accepted' : 'declined');
+        if (analyticsAccepted) {
+            fetch('{{ route('gdpr.consent') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ consent_type: 'analytics' })
+            });
+        } else {
+            fetch('{{ route('gdpr.withdraw') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ consent_type: 'analytics' })
+            });
+        }
+    }
 };
 </script>
 @endpush

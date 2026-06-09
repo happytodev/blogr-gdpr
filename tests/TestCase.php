@@ -27,7 +27,7 @@ class TestCase extends Orchestra
 
     protected function runGdprMigrations(): void
     {
-        Schema::create('consent_logs', function ($table) {
+        Schema::create('blogr_gdpr_consent_logs', function ($table) {
             $table->id();
             $table->string('email')->nullable();
             $table->string('ip_address')->nullable();
@@ -38,7 +38,7 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
-        Schema::create('gdpr_requests', function ($table) {
+        Schema::create('blogr_gdpr_requests', function ($table) {
             $table->id();
             $table->string('email');
             $table->string('request_type');

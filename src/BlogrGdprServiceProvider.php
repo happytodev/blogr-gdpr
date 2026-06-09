@@ -7,6 +7,11 @@ use Filament\PanelRegistry;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ListConsentLogs;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ViewConsentLog;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\EditGdprRequest;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRequests;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -54,6 +59,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->registerExtensions();
         $this->registerBladeStacks();
         $this->registerFilamentPages();
+        $this->registerFilamentResourceComponents();
         $this->autoCreatePrivacyPolicy();
         $this->registerCommands();
     }
@@ -100,6 +106,32 @@ class BlogrGdprServiceProvider extends ServiceProvider
         Route::get($path, GdprSettings::class)
             ->middleware($middleware)
             ->name('filament.'.$panel->getId().'.pages.'.$slug);
+    }
+
+    protected function registerFilamentResourceComponents(): void
+    {
+        if (! $this->isExtensionEnabled()) {
+            return;
+        }
+
+        if (! class_exists(Filament::class)) {
+            return;
+        }
+
+        $pages = [
+            ListGdprRequests::class,
+            ViewGdprRequest::class,
+            EditGdprRequest::class,
+            ListConsentLogs::class,
+            ViewConsentLog::class,
+        ];
+
+        foreach ($pages as $page) {
+            Livewire::component(
+                app(ComponentRegistry::class)->getName($page),
+                $page,
+            );
+        }
     }
 
     protected function registerBladeStacks(): void
@@ -156,6 +188,10 @@ class BlogrGdprServiceProvider extends ServiceProvider
             $view->getFactory()->startPush(
                 'footer-links',
                 view('blogr-gdpr::footer-privacy-link')->render(),
+            );
+            $view->getFactory()->startPush(
+                'footer-links',
+                view('blogr-gdpr::footer-manage-preferences')->render(),
             );
         });
     }

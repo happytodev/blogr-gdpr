@@ -9,6 +9,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Happytodev\Blogr\Services\ExtensionRegistry;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -24,6 +25,15 @@ class GdprSettings extends Page
     protected static ?string $title = 'GDPR Settings';
 
     protected string $view = 'blogr-gdpr::filament.pages.gdpr-settings';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (! app()->has(ExtensionRegistry::class)) {
+            return true;
+        }
+
+        return app(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
+    }
 
     // Cookie consent settings
     public bool $cookie_consent_enabled = true;

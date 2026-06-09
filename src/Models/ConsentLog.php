@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ConsentLog extends Model
 {
+    protected $table = 'blogr_gdpr_consent_logs';
+
     protected $fillable = [
         'email',
         'ip_address',

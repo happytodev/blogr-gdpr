@@ -9,8 +9,10 @@ Do not commit anything without the user's explicit agreement. Only the user init
 ## TDD workflow
 
 - When the user reports an error, fix it using TDD: write/update a test that reproduces the bug first, then fix the code.
+- Every new feature must include TDD tests.
 - Before each commit for a PHP file change, run `php -l` on the modified file(s).
 - Always run `php artisan test --parallel` before handing back to the user.
+- If server-side changes are needed (e.g. `php artisan migrate`, config changes, env updates), explicitly warn the user and ask for confirmation before modifying anything on their server.
 
 ## Commands
 
@@ -19,7 +21,7 @@ Do not commit anything without the user's explicit agreement. Only the user init
 | Run all tests | `composer test` (runs `vendor/bin/pest`) |
 | Single file | `vendor/bin/pest tests/Feature/GdprControllerTest.php` |
 
-Order: tests only (no lint/typecheck step before).
+Order: tests only (no lint/typecheck step before). Run `php artisan test --parallel` before handing back.
 
 ## Test quirks
 

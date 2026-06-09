@@ -3,14 +3,15 @@
 namespace Happytodev\BlogrGdpr\Filament\Resources;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ListConsentLogs;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ViewConsentLog;
 use Happytodev\BlogrGdpr\Models\ConsentLog;
@@ -24,6 +25,15 @@ class ConsentLogResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'GDPR';
 
     protected static ?string $recordTitleAttribute = 'email';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (! app()->has(ExtensionRegistry::class)) {
+            return true;
+        }
+
+        return app(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
+    }
 
     public static function getModelLabel(): string
     {
@@ -91,36 +101,46 @@ class ConsentLogResource extends Resource
     public static function infolist(Schema $schema): Schema
     {
         return $schema
-            ->columns(2)
             ->schema([
-                TextInput::make('email')
-                    ->label('Email')
-                    ->disabled(),
-                Select::make('consent_type')
-                    ->label('Consent Type')
-                    ->options([
-                        'cookies' => 'Cookies',
-                        'analytics' => 'Analytics',
-                        'contact' => 'Contact',
-                    ])
-                    ->disabled(),
-                Select::make('consent_given')
-                    ->label('Consent Given')
-                    ->options([
-                        '1' => 'Yes',
-                        '0' => 'No',
-                    ])
-                    ->disabled(),
-                TextInput::make('ip_address')
-                    ->label('IP Address')
-                    ->disabled(),
-                TextInput::make('user_agent')
-                    ->label('User Agent')
-                    ->disabled()
-                    ->columnSpanFull(),
-                TextInput::make('created_at')
-                    ->label('Date')
-                    ->disabled(),
+                Section::make('Visitor Information')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('email')
+                            ->label('Email')
+                            ->icon('heroicon-m-envelope')
+                            ->columnSpanFull(),
+                        TextEntry::make('ip_address')
+                            ->label('IP Address')
+                            ->icon('heroicon-m-computer-desktop'),
+                        TextEntry::make('user_agent')
+                            ->label('User Agent')
+                            ->columnSpanFull()
+                            ->limit(200),
+                    ]),
+                Section::make('Consent Details')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('consent_type')
+                            ->label('Consent Type')
+                            ->icon('heroicon-m-shield-check')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'cookies' => 'warning',
+                                'analytics' => 'info',
+                                'contact' => 'success',
+                                default => 'gray',
+                            }),
+                        TextEntry::make('consent_given')
+                            ->label('Consent Given')
+                            ->badge()
+                            ->color(fn (bool $state): string => $state ? 'success' : 'danger')
+                            ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
+                            ->icon(fn (bool $state): string => $state ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle'),
+                        TextEntry::make('created_at')
+                            ->label('Date')
+                            ->dateTime()
+                            ->icon('heroicon-m-calendar'),
+                    ]),
             ]);
     }
 

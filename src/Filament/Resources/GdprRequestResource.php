@@ -6,12 +6,15 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\EditGdprRequest;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRequests;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
@@ -25,6 +28,15 @@ class GdprRequestResource extends Resource
     protected static string|\UnitEnum|null $navigationGroup = 'GDPR';
 
     protected static ?string $recordTitleAttribute = 'email';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (! app()->has(ExtensionRegistry::class)) {
+            return true;
+        }
+
+        return app(ExtensionRegistry::class)->isEnabled('blogr-gdpr');
+    }
 
     public static function getModelLabel(): string
     {
@@ -84,52 +96,31 @@ class GdprRequestResource extends Resource
                     ]),
             ])
             ->recordActions([
-                Action::make('markCompleted')
-                    ->label('Mark Completed')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->visible(fn (GdprRequest $record): bool => $record->status === 'pending')
-                    ->requiresConfirmation()
-                    ->action(function (GdprRequest $record): void {
-                        $record->update([
-                            'status' => 'completed',
-                            'completed_at' => now(),
-                        ]);
-
-                        Notification::make()
-                            ->title('Request marked as completed')
-                            ->success()
-                            ->send();
-                    }),
+                Action::make('edit')
+                    ->icon('heroicon-o-pencil')
+                    ->url(fn (GdprRequest $record): string => GdprRequestResource::getUrl('edit', ['record' => $record])),
                 Action::make('view')
                     ->icon('heroicon-o-eye')
                     ->url(fn (GdprRequest $record): string => GdprRequestResource::getUrl('view', ['record' => $record])),
             ]);
     }
 
-    public static function infolist(Schema $schema): Schema
+    public static function form(Schema $schema): Schema
     {
         return $schema
             ->columns(2)
             ->schema([
                 TextInput::make('email')
-                    ->label('Email')
                     ->disabled(),
-                Select::make('request_type')
+                TextInput::make('request_type')
                     ->label('Request Type')
-                    ->options([
-                        'export' => 'Data Export',
-                        'erasure' => 'Data Erasure',
-                    ])
                     ->disabled(),
                 Select::make('status')
                     ->options([
                         'pending' => 'Pending',
                         'completed' => 'Completed',
-                    ])
-                    ->disabled(),
+                    ]),
                 Textarea::make('notes')
-                    ->disabled()
                     ->columnSpanFull(),
                 TextInput::make('completed_at')
                     ->label('Completed At')
@@ -140,11 +131,66 @@ class GdprRequestResource extends Resource
             ]);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Section::make('Request Information')
+                    ->columns(3)
+                    ->schema([
+                        TextEntry::make('email')
+                            ->label('Email')
+                            ->icon('heroicon-m-envelope')
+                            ->columnSpanFull(),
+                        TextEntry::make('request_type')
+                            ->label('Request Type')
+                            ->icon('heroicon-m-arrow-up-tray')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'export' => 'info',
+                                'erasure' => 'danger',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                'export' => 'Data Export',
+                                'erasure' => 'Data Erasure',
+                                default => $state,
+                            }),
+                        TextEntry::make('status')
+                            ->label('Status')
+                            ->icon('heroicon-m-clock')
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'pending' => 'warning',
+                                'completed' => 'success',
+                                default => 'gray',
+                            }),
+                        TextEntry::make('created_at')
+                            ->label('Submitted At')
+                            ->dateTime()
+                            ->icon('heroicon-m-calendar'),
+                        TextEntry::make('notes')
+                            ->label('Admin Notes')
+                            ->columnSpanFull(),
+                    ]),
+                Section::make('Processing Details')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('completed_at')
+                            ->label('Completed At')
+                            ->dateTime()
+                            ->icon('heroicon-m-check-badge')
+                            ->color(fn (?string $state): string => $state ? 'success' : 'gray'),
+                    ]),
+            ]);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => ListGdprRequests::route('/'),
             'view' => ViewGdprRequest::route('/{record}'),
+            'edit' => EditGdprRequest::route('/{record}/edit'),
         ];
     }
 }

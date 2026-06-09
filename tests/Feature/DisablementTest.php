@@ -3,6 +3,9 @@
 namespace Happytodev\BlogrGdpr\Tests\Feature;
 
 use Happytodev\Blogr\Services\ExtensionRegistry;
+use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 
 beforeEach(function () {
     $this->registry = app(ExtensionRegistry::class);
@@ -86,4 +89,28 @@ it('renders analytics consent HTML when extension is enabled and configured', fu
     $html = view('blogr::layouts.blog')->render();
 
     expect($html)->toContain('blogr-gdpr-analytics-consent');
+});
+
+it('hides gdpr request resource navigation when extension is disabled', function () {
+    expect(GdprRequestResource::shouldRegisterNavigation())->toBeTrue();
+
+    $this->registry->disable('blogr-gdpr');
+
+    expect(GdprRequestResource::shouldRegisterNavigation())->toBeFalse();
+});
+
+it('hides consent log resource navigation when extension is disabled', function () {
+    expect(ConsentLogResource::shouldRegisterNavigation())->toBeTrue();
+
+    $this->registry->disable('blogr-gdpr');
+
+    expect(ConsentLogResource::shouldRegisterNavigation())->toBeFalse();
+});
+
+it('hides gdpr settings page navigation when extension is disabled', function () {
+    expect(GdprSettings::shouldRegisterNavigation())->toBeTrue();
+
+    $this->registry->disable('blogr-gdpr');
+
+    expect(GdprSettings::shouldRegisterNavigation())->toBeFalse();
 });
