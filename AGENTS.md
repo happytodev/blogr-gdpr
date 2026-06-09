@@ -2,6 +2,10 @@
 
 A Laravel/Filament package (`happytodev/blogr-gdpr`) providing GDPR compliance for Blogr CMS.
 
+## Commit policy
+
+Do not commit anything without the user's explicit agreement. Only the user initiates commits, typically via the release-manager skill.
+
 ## Commands
 
 | What | How |

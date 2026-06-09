@@ -3,6 +3,7 @@
 namespace Happytodev\BlogrGdpr;
 
 use Filament\Facades\Filament;
+use Filament\PanelRegistry;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
@@ -19,6 +20,16 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/blogr-gdpr.php', 'blogr-gdpr');
 
         $this->app->singleton(BlogrGdprPlugin::class, fn () => new BlogrGdprPlugin);
+
+        $this->app->afterResolving(PanelRegistry::class, function (PanelRegistry $registry): void {
+            $panel = $registry->get('admin');
+
+            if (! $panel) {
+                return;
+            }
+
+            $panel->plugin($this->app->make(BlogrGdprPlugin::class));
+        });
     }
 
     public function boot(): void
