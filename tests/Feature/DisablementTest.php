@@ -10,8 +10,6 @@ use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 beforeEach(function () {
     $this->registry = app(ExtensionRegistry::class);
 
-    // Reset config that may persist from previous tests
-    config(['blogr.analytics.provider' => null]);
     config(['blogr-gdpr.analytics_consent.enabled' => true]);
 
     // Register routes required by view composers
@@ -135,6 +133,8 @@ it('renders analytics consent when blogr analytics provider is set', function ()
     config(['blogr-gdpr.analytics_consent.enabled' => true]);
     config(['blogr.analytics.provider' => 'umami']);
 
+    expect(config('blogr.analytics.provider'))->not->toBeNull('Provider must be set for this test');
+
     $html = view('blogr::layouts.blog')->render();
 
     expect($html)->toContain('blogr-gdpr-analytics-consent');
@@ -143,6 +143,8 @@ it('renders analytics consent when blogr analytics provider is set', function ()
 it('does not render analytics consent when blogr analytics provider is null', function () {
     config(['blogr-gdpr.analytics_consent.enabled' => true]);
     config(['blogr.analytics.provider' => null]);
+
+    expect(config('blogr.analytics.provider'))->toBeNull('Provider must be null for this test');
 
     $html = view('blogr::layouts.blog')->render();
 
