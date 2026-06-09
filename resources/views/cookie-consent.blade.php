@@ -6,7 +6,7 @@
     $textColor = $isDark ? '#e0e0e0' : '#333333';
     $borderColor = $isDark ? '#333' : '#e0e0e0';
     $categories = config('blogr-gdpr.cookie_consent.categories', []);
-    $showAnalyticsToggle = config('blogr-gdpr.analytics_consent.enabled') && count(config('blogr-gdpr.analytics_consent.providers', [])) > 0;
+    $showAnalyticsToggle = config('blogr-gdpr.analytics_consent.enabled') && filled(config('blogr.analytics.provider'));
     $positionStyles = $position === 'bottom'
         ? 'bottom: 0; left: 0; right: 0; border-top: 1px solid ' . $borderColor . ';'
         : 'top: 0; left: 0; right: 0; border-bottom: 1px solid ' . $borderColor . ';';
@@ -141,6 +141,19 @@ window.blogrGdprAcceptCookies = function() {
         },
         body: JSON.stringify({ consent_type: 'cookies', consent_data: { categories: categories } })
     });
+
+    var toggle = document.getElementById('blogr-gdpr-analytics-toggle');
+    if (toggle) {
+        localStorage.setItem('blogr_gdpr_analytics', 'accepted');
+        fetch('{{ route('gdpr.consent') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ consent_type: 'analytics' })
+        });
+    }
 };
 
 window.blogrGdprDeclineCookies = function() {

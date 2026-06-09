@@ -34,11 +34,7 @@ it('does not render cookie consent HTML when extension is disabled', function ()
 });
 
 it('does not render analytics consent HTML when extension is disabled', function () {
-    config(['blogr-gdpr.analytics_consent' => [
-        'enabled' => true,
-        'providers' => ['google-analytics'],
-        'position' => 'body',
-    ]]);
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
     config(['blogr.analytics.provider' => 'google-analytics']);
 
     $this->registry->disable('blogr-gdpr');
@@ -77,11 +73,7 @@ it('renders cookie consent HTML when extension is enabled', function () {
 });
 
 it('renders analytics consent HTML when extension is enabled and configured', function () {
-    config(['blogr-gdpr.analytics_consent' => [
-        'enabled' => true,
-        'providers' => ['google-analytics'],
-        'position' => 'body',
-    ]]);
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
     config(['blogr.analytics.provider' => 'google-analytics']);
 
     expect($this->registry->isEnabled('blogr-gdpr'))->toBeTrue();
@@ -113,4 +105,22 @@ it('hides gdpr settings page navigation when extension is disabled', function ()
     $this->registry->disable('blogr-gdpr');
 
     expect(GdprSettings::shouldRegisterNavigation())->toBeFalse();
+});
+
+it('renders analytics consent when blogr analytics provider is set', function () {
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
+    config(['blogr.analytics.provider' => 'umami']);
+
+    $html = view('blogr::layouts.blog')->render();
+
+    expect($html)->toContain('blogr-gdpr-analytics-consent');
+});
+
+it('does not render analytics consent when blogr analytics provider is null', function () {
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
+    config(['blogr.analytics.provider' => null]);
+
+    $html = view('blogr::layouts.blog')->render();
+
+    expect($html)->not->toContain('blogr-gdpr-analytics-consent');
 });

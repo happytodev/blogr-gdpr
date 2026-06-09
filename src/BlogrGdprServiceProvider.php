@@ -152,9 +152,8 @@ class BlogrGdprServiceProvider extends ServiceProvider
             if (! config('blogr-gdpr.analytics_consent.enabled') || ! $this->isExtensionEnabled()) {
                 return;
             }
-            $providers = config('blogr-gdpr.analytics_consent.providers', []);
             $trackerProvider = config('blogr.analytics.provider');
-            if (empty($providers) || ! in_array($trackerProvider, $providers, true)) {
+            if (blank($trackerProvider)) {
                 return;
             }
             $position = config('blogr-gdpr.analytics_consent.position', 'body');
@@ -261,7 +260,6 @@ class BlogrGdprServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\Commands\PruneConsentLogs::class,
-                Console\Commands\ProcessDataRequests::class,
             ]);
         }
     }

@@ -3,9 +3,10 @@
 /*
  * Blogr GDPR – Analytics Provider Guide
  * ---------------------------------------
- * When you add a provider to the `providers` array below, the analytics
- * consent gate will be shown to visitors so they can accept or decline
- * tracking **before** the provider script loads.
+ * The analytics consent gate is automatically activated when a provider is
+ * configured in Blogr's own analytics settings (`blogr.analytics.provider`).
+ * The `providers` array below is optional — if left empty, the gate still
+ * works based on which provider Blogr is set to use.
  *
  * Overview of supported providers:
  *

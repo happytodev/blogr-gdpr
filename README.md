@@ -65,6 +65,16 @@ Configure your DPO details in `config/blogr-gdpr.php`:
 ],
 ```
 
+The analytics consent gate is automatically enabled when you configure a provider in Blogr's analytics settings — no additional setup needed.
+
+## Maintenance
+
+Prune expired consent log entries (recommended as a daily cron job):
+
+```bash
+0 3 * * * cd /path/to/project && php artisan blogr-gdpr:prune-logs >> /dev/null 2>&1
+```
+
 ## Testing
 
 ```bash
