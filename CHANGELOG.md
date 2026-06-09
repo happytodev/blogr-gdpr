@@ -2,6 +2,19 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.3.0 - 2026-06-09
+
+### ✨ Features
+
+- **Auto-activate analytics gate**: Consent gate now shows automatically when `blogr.analytics.provider` is set — no manual `providers` config needed
+- **"Accept All" now also accepts analytics**: Clicking "Accept All" on the cookie banner also sends analytics consent
+- **Manage preferences modal**: Analytics toggle is shown in the cookie preferences modal when a provider is configured
+- **README**: Added cron maintenance instructions for `blogr-gdpr:prune-logs`
+
+### 🔧 Maintenance
+
+- **Removed `ProcessDataRequests` command**: Data requests must be handled manually through the admin UI
+
 ## v1.2.0 - 2026-06-09
 
 ### ✨ Features
