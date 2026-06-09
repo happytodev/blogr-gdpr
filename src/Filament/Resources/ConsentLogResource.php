@@ -5,14 +5,14 @@ namespace Happytodev\BlogrGdpr\Filament\Resources;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ListConsentLogs;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ViewConsentLog;
 use Happytodev\BlogrGdpr\Models\ConsentLog;
 
 class ConsentLogResource extends Resource
@@ -127,8 +127,8 @@ class ConsentLogResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListRecords::route('/'),
-            'view' => ViewRecord::route('/{record}'),
+            'index' => ListConsentLogs::route('/'),
+            'view' => ViewConsentLog::route('/{record}'),
         ];
     }
 }

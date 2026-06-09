@@ -7,13 +7,13 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Resources\Pages\ViewRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRequests;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
 
 class GdprRequestResource extends Resource
@@ -143,8 +143,8 @@ class GdprRequestResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListRecords::route('/'),
-            'view' => ViewRecord::route('/{record}'),
+            'index' => ListGdprRequests::route('/'),
+            'view' => ViewGdprRequest::route('/{record}'),
         ];
     }
 }

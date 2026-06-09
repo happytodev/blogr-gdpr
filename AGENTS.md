@@ -6,6 +6,12 @@ A Laravel/Filament package (`happytodev/blogr-gdpr`) providing GDPR compliance f
 
 Do not commit anything without the user's explicit agreement. Only the user initiates commits, typically via the release-manager skill.
 
+## TDD workflow
+
+- When the user reports an error, fix it using TDD: write/update a test that reproduces the bug first, then fix the code.
+- Before each commit for a PHP file change, run `php -l` on the modified file(s).
+- Always run `php artisan test --parallel` before handing back to the user.
+
 ## Commands
 
 | What | How |
