@@ -181,17 +181,35 @@ class BlogrGdprServiceProvider extends ServiceProvider
         });
 
         View::composer('blogr::components.footer', function ($view) {
-            if (! config('blogr-gdpr.enabled') || ! config('blogr-gdpr.privacy_policy.auto_create') || ! $this->isExtensionEnabled()) {
+            if (! config('blogr-gdpr.enabled') || ! $this->isExtensionEnabled()) {
                 return;
             }
-            $view->getFactory()->startPush(
-                'footer-links',
-                view('blogr-gdpr::footer-privacy-link')->render(),
-            );
+
+            if (config('blogr-gdpr.privacy_policy.auto_create')) {
+                $view->getFactory()->startPush(
+                    'footer-links',
+                    view('blogr-gdpr::footer-privacy-link')->render(),
+                );
+            }
+
             $view->getFactory()->startPush(
                 'footer-links',
                 view('blogr-gdpr::footer-manage-preferences')->render(),
             );
+
+            if (config('blogr-gdpr.data_export.show_public_link')) {
+                $view->getFactory()->startPush(
+                    'footer-links',
+                    view('blogr-gdpr::footer-data-export')->render(),
+                );
+            }
+
+            if (config('blogr-gdpr.data_erasure.show_public_link')) {
+                $view->getFactory()->startPush(
+                    'footer-links',
+                    view('blogr-gdpr::footer-data-erasure')->render(),
+                );
+            }
         });
     }
 

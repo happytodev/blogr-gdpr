@@ -64,6 +64,26 @@ it('does not render footer privacy link when extension is disabled', function ()
     expect($html)->not->toContain('Privacy');
 });
 
+it('renders data request links in footer when enabled', function () {
+    config(['blogr-gdpr.data_export.show_public_link' => true]);
+    config(['blogr-gdpr.data_erasure.show_public_link' => true]);
+
+    $html = view('blogr::components.footer')->render();
+
+    expect($html)->toContain('Request my data');
+    expect($html)->toContain('Request data deletion');
+});
+
+it('does not render data request links in footer when disabled', function () {
+    config(['blogr-gdpr.data_export.show_public_link' => false]);
+    config(['blogr-gdpr.data_erasure.show_public_link' => false]);
+
+    $html = view('blogr::components.footer')->render();
+
+    expect($html)->not->toContain('Request my data');
+    expect($html)->not->toContain('Request data deletion');
+});
+
 it('renders cookie consent HTML when extension is enabled', function () {
     expect($this->registry->isEnabled('blogr-gdpr'))->toBeTrue();
 

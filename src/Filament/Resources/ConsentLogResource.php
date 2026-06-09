@@ -61,11 +61,20 @@ class ConsentLogResource extends Resource
                         'contact' => 'success',
                         default => 'gray',
                     }),
+                TextColumn::make('consent_data')
+                    ->label('Categories')
+                    ->formatStateUsing(fn ($state): string => match (true) {
+                        is_array($state) && isset($state['categories']) => collect($state['categories'])->filter()->keys()->implode(', '),
+                        is_array($state) => collect($state)->filter()->keys()->implode(', '),
+                        is_string($state) => $state,
+                        default => '',
+                    })
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('consent_given')
                     ->label('Consent')
                     ->badge()
-                    ->color(fn (bool $state): string => $state ? 'success' : 'danger')
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No'),
+                    ->color(fn ($state): string => $state ? 'success' : 'danger')
+                    ->formatStateUsing(fn ($state): string => $state ? 'Yes' : 'No'),
                 TextColumn::make('ip_address')
                     ->label('IP')
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -133,13 +142,23 @@ class ConsentLogResource extends Resource
                         TextEntry::make('consent_given')
                             ->label('Consent Given')
                             ->badge()
-                            ->color(fn (bool $state): string => $state ? 'success' : 'danger')
-                            ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
-                            ->icon(fn (bool $state): string => $state ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle'),
+                            ->color(fn ($state): string => $state ? 'success' : 'danger')
+                            ->formatStateUsing(fn ($state): string => $state ? 'Yes' : 'No')
+                            ->icon(fn ($state): string => $state ? 'heroicon-m-check-circle' : 'heroicon-m-x-circle'),
                         TextEntry::make('created_at')
                             ->label('Date')
                             ->dateTime()
                             ->icon('heroicon-m-calendar'),
+                        TextEntry::make('consent_data')
+                            ->label('Accepted Categories')
+                            ->icon('heroicon-m-cube')
+                            ->formatStateUsing(fn ($state): string => match (true) {
+                                is_array($state) && isset($state['categories']) => collect($state['categories'])->filter()->keys()->implode(', '),
+                                is_array($state) => collect($state)->filter()->keys()->implode(', '),
+                                is_string($state) => $state,
+                                default => '-',
+                            })
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

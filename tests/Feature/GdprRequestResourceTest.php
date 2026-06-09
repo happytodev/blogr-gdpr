@@ -8,6 +8,7 @@ use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ListConsent
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ViewConsentLog;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\EditGdprRequest;
+use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRequests;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
@@ -123,4 +124,93 @@ it('registers consent log pages as livewire components', function () {
         $class = $registry->getClass($name);
         expect($class)->not->toBeNull();
     }
+});
+
+it('renders consent log infolist without type error when consent_data is null', function () {
+    $log = ConsentLog::create([
+        'consent_type' => 'analytics',
+        'consent_given' => true,
+    ]);
+
+    $schema = ConsentLogResource::infolist(
+        app(\Filament\Schemas\Schema::class)
+    );
+
+    $components = $schema->getComponents();
+    expect($components)->not->toBeEmpty();
+});
+
+it('formats consent_data categories in table column', function () {
+    $log = ConsentLog::create([
+        'email' => 'test@example.com',
+        'consent_type' => 'cookies',
+        'consent_given' => true,
+        'consent_data' => [
+            'categories' => [
+                'essential' => true,
+                'analytics' => true,
+                'marketing' => false,
+            ],
+        ],
+    ]);
+
+    expect($log->consent_data)->toBeArray();
+    expect($log->consent_data)->toHaveKey('categories');
+
+    $state = $log->consent_data;
+    $result = is_array($state) && isset($state['categories'])
+        ? collect($state['categories'])->filter()->keys()->implode(', ')
+        : '';
+
+    expect($result)->toBe('essential, analytics');
+});
+
+it('formats consent_data categories in infolist', function () {
+    $log = ConsentLog::create([
+        'email' => 'test@example.com',
+        'consent_type' => 'cookies',
+        'consent_given' => true,
+        'consent_data' => [
+            'categories' => [
+                'essential' => true,
+                'marketing' => true,
+                'analytics' => false,
+            ],
+        ],
+    ]);
+
+    $state = $log->consent_data;
+    $result = is_array($state) && isset($state['categories'])
+        ? collect($state['categories'])->filter()->keys()->implode(', ')
+        : '';
+
+    expect($result)->toBe('essential, marketing');
+});
+
+it('formats consent_data from endpoint through model', function () {
+    $this
+        ->post(route('gdpr.consent'), [
+            'consent_type' => 'cookies',
+            'consent_data' => [
+                'categories' => [
+                    'essential' => true,
+                    'analytics' => false,
+                    'marketing' => true,
+                ],
+            ],
+        ])
+        ->assertSessionHas('blogr_gdpr_consent_cookies', true);
+
+    $log = ConsentLog::where('consent_type', 'cookies')->latest()->first();
+    expect($log)->not->toBeNull();
+    expect($log->consent_data)->toBeArray();
+    expect($log->consent_data['categories']['essential'])->toBeTrue();
+    expect($log->consent_data['categories']['marketing'])->toBeTrue();
+
+    $state = $log->consent_data;
+    $formatted = is_array($state) && isset($state['categories'])
+        ? collect($state['categories'])->filter()->keys()->implode(', ')
+        : '';
+
+    expect($formatted)->toBe('essential, marketing');
 });

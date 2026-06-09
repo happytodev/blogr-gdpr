@@ -96,10 +96,12 @@ return [
 
     'data_export' => [
         'enabled' => true,
+        'show_public_link' => true,
     ],
 
     'data_erasure' => [
         'enabled' => true,
+        'show_public_link' => true,
     ],
 
     'consent_log' => [
