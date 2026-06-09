@@ -84,9 +84,13 @@ class GdprSettings extends Page
 
     public bool $data_export_show_link = true;
 
+    public string $data_export_url = '';
+
     public bool $data_erasure_enabled = true;
 
     public bool $data_erasure_show_link = true;
+
+    public string $data_erasure_url = '';
 
     // Consent log settings
     public bool $consent_log_enabled = true;
@@ -141,8 +145,10 @@ class GdprSettings extends Page
 
         $this->data_export_enabled = $config['data_export']['enabled'] ?? true;
         $this->data_export_show_link = $config['data_export']['show_public_link'] ?? true;
+        $this->data_export_url = route('gdpr.data-export');
         $this->data_erasure_enabled = $config['data_erasure']['enabled'] ?? true;
         $this->data_erasure_show_link = $config['data_erasure']['show_public_link'] ?? true;
+        $this->data_erasure_url = route('gdpr.data-erasure');
 
         $this->consent_log_enabled = $config['consent_log']['enabled'] ?? true;
         $this->consent_log_retention_days = $config['consent_log']['retention_days'] ?? 365;
