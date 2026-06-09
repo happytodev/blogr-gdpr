@@ -2,6 +2,13 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.4.1 - 2026-06-09
+
+### 🐛 Bug Fixes
+
+- **CI test flakiness**: Reset analytics provider config in beforeEach to prevent cross-test pollution
+- **Pint code style**: Fixed style issues in GdrRequestResourceTest
+
 ## v1.4.0 - 2026-06-09
 
 ### ✨ Features
