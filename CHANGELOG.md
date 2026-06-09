@@ -2,6 +2,18 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.5.0 - 2026-06-09
+
+### ✨ Features
+
+- **Security skill**: Dedicated OWASP Top 10 + CVE scanning skill (`security-manager`)
+- **Rate limiting**: `throttle:10,60` on all POST routes
+- **Authorization gates**: `canAccess()` on GdprSettings, `canViewAny()`/`canEdit()` on resources
+- **CSP headers**: Content-Security-Policy, X-Content-Type-Options, X-Frame-Options, Referrer-Policy
+- **Async notifications**: `DataRequestNotification` implements `ShouldQueue`
+- **Security tests**: 3 new tests (queue, headers, rate limiting)
+- **`.env.example`**: Created
+
 ## v1.4.3 - 2026-06-09
 
 ### 🐛 Bug Fixes
