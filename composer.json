@@ -1,6 +1,6 @@
 {
     "name": "happytodev/blogr-gdpr",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "type": "library",
     "description": "GDPR compliance plugin for Blogr CMS - cookie consent, privacy, data export/erasure",
     "keywords": ["blogr", "gdpr", "privacy", "cookie-consent", "filamentphp"],
