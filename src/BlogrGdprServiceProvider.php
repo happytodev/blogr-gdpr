@@ -6,8 +6,6 @@ use Filament\Facades\Filament;
 use Happytodev\Blogr\Models\CmsPage;
 use Happytodev\Blogr\Services\ExtensionRegistry;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
-use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
-use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -45,7 +43,6 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->registerExtensions();
         $this->registerBladeStacks();
         $this->registerFilamentPages();
-        $this->registerFilamentResources();
         $this->autoCreatePrivacyPolicy();
         $this->registerCommands();
     }
@@ -92,32 +89,6 @@ class BlogrGdprServiceProvider extends ServiceProvider
         Route::get($path, GdprSettings::class)
             ->middleware($middleware)
             ->name('filament.'.$panel->getId().'.pages.'.$slug);
-    }
-
-    protected function registerFilamentResources(): void
-    {
-        if (! $this->isExtensionEnabled()) {
-            return;
-        }
-
-        if (! class_exists(Filament::class)) {
-            return;
-        }
-
-        try {
-            $panel = Filament::getPanel('admin');
-        } catch (\Exception $e) {
-            return;
-        }
-
-        if (! $panel) {
-            return;
-        }
-
-        $panel->resources([
-            GdprRequestResource::class,
-            ConsentLogResource::class,
-        ]);
     }
 
     protected function registerBladeStacks(): void

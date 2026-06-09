@@ -6,6 +6,8 @@ use Filament\Contracts\Plugin as FilamentPlugin;
 use Filament\Panel;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
+use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
+use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 
 class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
 {
@@ -46,9 +48,14 @@ class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
 
     public function register(Panel $panel): void
     {
-        $panel->pages([
-            GdprSettings::class,
-        ]);
+        $panel
+            ->pages([
+                GdprSettings::class,
+            ])
+            ->resources([
+                GdprRequestResource::class,
+                ConsentLogResource::class,
+            ]);
     }
 
     public function boot(Panel $panel): void
