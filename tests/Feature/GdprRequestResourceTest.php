@@ -3,14 +3,15 @@
 namespace Happytodev\BlogrGdpr\Tests;
 
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Schema;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ListConsentLogs;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource\Pages\ViewConsentLog;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\EditGdprRequest;
-use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRequests;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
+use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
 use Livewire\Mechanisms\ComponentRegistry;
 
@@ -133,7 +134,7 @@ it('renders consent log infolist without type error when consent_data is null', 
     ]);
 
     $schema = ConsentLogResource::infolist(
-        app(\Filament\Schemas\Schema::class)
+        app(Schema::class)
     );
 
     $components = $schema->getComponents();

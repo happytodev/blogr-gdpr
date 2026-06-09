@@ -10,6 +10,10 @@ use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 beforeEach(function () {
     $this->registry = app(ExtensionRegistry::class);
 
+    // Reset config that may persist from previous tests
+    config(['blogr.analytics.provider' => null]);
+    config(['blogr-gdpr.analytics_consent.enabled' => true]);
+
     // Register routes required by view composers
     app('router')->get('feed', function () {})->name('blog.feed');
     app('router')->get('cms/{slug}', function () {})->name('cms.page.show');
