@@ -4,6 +4,7 @@ namespace Happytodev\BlogrGdpr;
 
 use Filament\Contracts\Plugin as FilamentPlugin;
 use Filament\Panel;
+use Happytodev\Blogr\Concerns\RegistersLinkTypes;
 use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
@@ -11,6 +12,7 @@ use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
 
 class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
 {
+    use RegistersLinkTypes;
     public function getId(): string
     {
         return 'blogr-gdpr';
