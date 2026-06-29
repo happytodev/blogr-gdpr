@@ -2,6 +2,12 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v1.5.2 - 2026-06-29
+
+### 🐛 Bug Fixes
+
+- **Plugin**: add `RegistersLinkTypes` trait for LinkTypeRegistry support (required by Blogr v1.19.0)
+
 ## v1.5.1 - 2026-06-09
 
 ### 🐛 Bug Fixes
