@@ -9,6 +9,7 @@ use Happytodev\Blogr\Contracts\BlogrExtension;
 use Happytodev\BlogrGdpr\Filament\Pages\GdprSettings;
 use Happytodev\BlogrGdpr\Filament\Resources\ConsentLogResource;
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource;
+use Illuminate\Support\Facades\DB;
 
 class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
 {
@@ -48,8 +49,43 @@ class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
         return [];
     }
 
+    public function getSettingsUrl(): ?string
+    {
+        try {
+            $disabled = DB::table('blogr_extension_states')
+                ->where('extension_id', 'blogr-gdpr')
+                ->whereNotNull('disabled_at')
+                ->exists();
+        } catch (\Throwable) {
+            $disabled = false;
+        }
+
+        if ($disabled) {
+            return null;
+        }
+
+        try {
+            return GdprSettings::getUrl();
+        } catch (\Throwable) {
+            return null;
+        }
+    }
+
     public function register(Panel $panel): void
     {
+        try {
+            $disabled = DB::table('blogr_extension_states')
+                ->where('extension_id', 'blogr-gdpr')
+                ->whereNotNull('disabled_at')
+                ->exists();
+        } catch (\Throwable) {
+            $disabled = false;
+        }
+
+        if ($disabled) {
+            return;
+        }
+
         $panel
             ->pages([
                 GdprSettings::class,
