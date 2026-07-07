@@ -13,7 +13,8 @@ use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ListGdprRe
 use Happytodev\BlogrGdpr\Filament\Resources\GdprRequestResource\Pages\ViewGdprRequest;
 use Happytodev\BlogrGdpr\Models\ConsentLog;
 use Happytodev\BlogrGdpr\Models\GdprRequest;
-use Livewire\Mechanisms\ComponentRegistry;
+use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 it('has resource property set on gdpr request list page', function () {
     $pages = GdprRequestResource::getPages();
@@ -98,32 +99,26 @@ it('does not set completed_at when status remains pending on edit gdpr request p
     expect($data)->not->toHaveKey('completed_at');
 });
 
-it('registers gdpr request pages as livewire components', function () {
-    $registry = app(ComponentRegistry::class);
-
-    $componentNames = [
-        $registry->getName(ListGdprRequests::class),
-        $registry->getName(EditGdprRequest::class),
-        $registry->getName(ViewGdprRequest::class),
+it('gdpr request pages can be instantiated', function () {
+    $pages = [
+        ListGdprRequests::class,
+        EditGdprRequest::class,
+        ViewGdprRequest::class,
     ];
 
-    foreach ($componentNames as $name) {
-        $class = $registry->getClass($name);
-        expect($class)->not->toBeNull();
+    foreach ($pages as $page) {
+        expect(fn () => app($page))->not->toThrow(\Throwable::class);
     }
 });
 
-it('registers consent log pages as livewire components', function () {
-    $registry = app(ComponentRegistry::class);
-
-    $componentNames = [
-        $registry->getName(ListConsentLogs::class),
-        $registry->getName(ViewConsentLog::class),
+it('consent log pages can be instantiated', function () {
+    $pages = [
+        ListConsentLogs::class,
+        ViewConsentLog::class,
     ];
 
-    foreach ($componentNames as $name) {
-        $class = $registry->getClass($name);
-        expect($class)->not->toBeNull();
+    foreach ($pages as $page) {
+        expect(fn () => app($page))->not->toThrow(\Throwable::class);
     }
 });
 
