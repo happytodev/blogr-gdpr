@@ -8,7 +8,7 @@ issue before any code is written or proposed.** This ensures traceability.
 - User says "there is a bug" → create issue with `--label bug`
 - User says "I need a feature" → create issue with `--label feature`
 - The issue is created via `gh issue create` immediately upon understanding the need
-- The issue MUST be closed when the work is merged into `main`
+- The issue MUST be closed when the work is merged into `main` — the PR description MUST include `Closes #<issue_number>` to auto-close on merge
 - Skipping this is a process error
 
 ## ⚠️ Commit policy — ZERO TOLERANCE
