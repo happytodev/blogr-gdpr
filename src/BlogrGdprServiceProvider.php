@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
-use Livewire\Mechanisms\ComponentRegistry;
+use Illuminate\Support\Str;
 
 class BlogrGdprServiceProvider extends ServiceProvider
 {
@@ -95,7 +95,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $panel->pages([GdprSettings::class]);
 
         Livewire::component(
-            app(ComponentRegistry::class)->getName(GdprSettings::class),
+            Str::kebab(class_basename(GdprSettings::class)),
             GdprSettings::class,
         );
 
@@ -128,7 +128,7 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
         foreach ($pages as $page) {
             Livewire::component(
-                app(ComponentRegistry::class)->getName($page),
+                Str::kebab(class_basename($page)),
                 $page,
             );
         }
