@@ -2,6 +2,51 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v2.1.0 - 2026-10-15
+
+### 🐛 Bug Fixes
+
+- **Settings are stored in the database instead of the config file** (#3). Saving the GDPR settings
+  page rewrote `config/blogr-gdpr.php` — and wrote into the package's own copy first, under
+  `vendor/`, which any `composer install` replaces. On a host that deploys by release directories,
+  an admin save therefore held until the next deployment and then reverted. The values now go into
+  the `blogr_gdpr_settings` table (created since the first migration, never used until now) and are
+  applied on top of the file at boot; the committed `config/blogr-gdpr.php` keeps its role of
+  defaults and its comments. `null` values are never stored, and the previous behaviour is kept
+  while the table has not been migrated.
+- **The cookie consent banner honours its own flag** (#4). `cookie_consent.enabled` was never read:
+  the banner was pushed as soon as the plugin was enabled, so the settings toggle silently did
+  nothing and a site whose measurement needs no consent could not avoid asking for one.
+- **The "manage my preferences" link only appears when there is a consent interface to open** (#4).
+  It was pushed into the footer whenever the plugin was enabled, while the function it calls lives in
+  the banner: with no banner, the link opened nothing and raised an error in the console.
+- **The analytics consent now actually gates the tracker** (#6). The choice was kept in the visitor's
+  `localStorage` only, so the server could not act on it and the provider's tag went out to everyone —
+  the consent was recorded, and the measurement ran anyway. The choice is now also written to a cookie
+  (`blogr_gdpr_analytics`), and the page is served without the provider's tag until it says
+  `accepted`. Accepting or declining goes through the server, which sets the cookie and redirects:
+  there is no window in which the measurement runs without consent. The functions the banner calls
+  (`blogrGdprShowAnalytics`, `blogrGdprHideAnalytics`) were defined nowhere and now exist, so the
+  banner's own preferences window works too.
+- **The privacy policy the plugin creates renders as text, not as its own markup** (#5). A Blogr
+  content block holds markdown, escaped on purpose against XSS, while the plugin built HTML blocks:
+  visitors read `<h2>1. Introduction</h2>`. The templates are markdown now, split on their headings,
+  and a page already created by an earlier version is detected and rewritten on the next boot instead
+  of staying broken.
+- **The data access and erasure forms follow the site language** (#7). Their routes carried no locale,
+  so the site's own `SetLocale` middleware never ran and both forms were rendered in the default
+  language. They are also served under `/{locale}/gdpr/…`, which is what the footer links to. The
+  prefixless addresses stay in place: published links, form posts and the banner's JavaScript keep
+  working unchanged. Blogr's CMS route pattern would have swallowed the new prefix, so the plugin
+  reserves `gdpr` before Blogr builds its pattern.
+
+### ⬆️ Upgrading
+
+- Re-publish the views to get the corrected screens:
+  `php artisan vendor:publish --tag=blogr-gdpr-views` (add `--force` to overwrite the copies already
+  published).
+- Run `php artisan migrate` to create the settings table.
+
 ## v1.5.2 - 2026-06-29
 
 ### 🐛 Bug Fixes
