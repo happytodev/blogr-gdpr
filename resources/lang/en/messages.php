@@ -53,6 +53,7 @@ return [
     'request_my_data' => 'Request my data',
     'request_data_deletion' => 'Request data deletion',
     'settings' => [
+        'stored_in_database' => ':count settings stored in the database — they survive deployments and config:clear.',
         'cookie_consent_enabled' => 'Show the cookie consent banner to visitors on their first visit.',
         'cookie_consent_required' => 'Visitors must accept or customize cookies before continuing. If disabled, cookies are opt-out.',
         'cookie_consent_position' => 'Where the cookie banner appears on the page.',

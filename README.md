@@ -77,6 +77,24 @@ php artisan vendor:publish --tag=blogr-gdpr-config --force
 php artisan config:clear
 ```
 
+### Where the settings are stored
+
+Saving the GDPR settings page stores one row per setting in the `blogr_gdpr_settings` table, and
+those values are applied **on top of** `config/blogr-gdpr.php` when the application boots. The file
+therefore keeps playing the role of the defaults, and stays the place to version your consent
+configuration in Git.
+
+This matters on a host that deploys by release directories: the file ships with each release, so a
+value saved only there is replaced by the next deployment. A stored setting survives deployments,
+rollbacks and `config:clear`.
+
+- The stored list is read once per request and never cached: a stale entry would keep a deleted
+  setting alive.
+- The values are not baked into the compiled configuration (`php artisan config:cache` boots the
+  application before dumping it), so a stored value can always be changed or removed without
+  waiting for a cache rebuild.
+- While the table has not been migrated, saving keeps the previous behaviour.
+
 > ⚠️ If footer links ("Request my data", "Request data deletion") don't appear after enabling them in GDPR Settings, re-publish the views and clear the config cache.
 
 ## Maintenance

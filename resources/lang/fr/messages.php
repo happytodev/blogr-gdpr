@@ -53,6 +53,7 @@ return [
     'request_my_data' => 'Demander mes données',
     'request_data_deletion' => 'Demander la suppression',
     'settings' => [
+        'stored_in_database' => ':count réglages enregistrés en base — ils survivent aux déploiements et à un config:clear.',
         'cookie_consent_enabled' => 'Affiche la bannière de consentement aux cookies lors de la première visite.',
         'cookie_consent_required' => 'Les visiteurs doivent accepter ou personnaliser les cookies avant de continuer. Si désactivé, les cookies sont en opt-out.',
         'cookie_consent_position' => 'Position de la bannière sur la page.',

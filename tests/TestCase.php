@@ -38,6 +38,13 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
+        Schema::create('blogr_gdpr_settings', function ($table) {
+            $table->id();
+            $table->string('key')->unique();
+            $table->text('value')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('blogr_gdpr_requests', function ($table) {
             $table->id();
             $table->string('email');
