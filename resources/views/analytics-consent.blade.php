@@ -11,9 +11,14 @@
     $positionStyles = $position === 'bottom'
         ? 'bottom: 0; left: 0; right: 0; border-top: 1px solid ' . $borderColor . ';'
         : 'top: 0; left: 0; right: 0; border-bottom: 1px solid ' . $borderColor . ';';
+
+    // Le cookie dit si le visiteur a déjà accepté : dans ce cas, la balise du
+    // fournisseur est servie et cette bande n'a plus rien à demander.
+    $accepted = $accepted ?? false;
 @endphp
 
-<div id="blogr-gdpr-analytics-consent" style="display: none; position: fixed; {{ $positionStyles }} z-index: 9998; padding: 16px; background: {{ $bgColor }}; color: {{ $textColor }}; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); font-family: system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5;">
+@if(! $accepted)
+<div id="blogr-gdpr-analytics-consent" style="position: fixed; {{ $positionStyles }} z-index: 9998; padding: 16px; background: {{ $bgColor }}; color: {{ $textColor }}; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); font-family: system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.5;">
     <div style="max-width: 1200px; margin: 0 auto;">
         <p style="margin: 0 0 6px 0; font-weight: 600;">
             {{ __('blogr-gdpr::messages.analytics_consent_title', ['provider' => $providerLabel]) }}
@@ -31,45 +36,70 @@
             <span style="color: #f97316;">&#9888;</span> {{ $providerCon }}
         </p>
         @endif
+
+        {{--
+            Deux formulaires plutôt que deux boutons JavaScript : c'est le serveur
+            qui enregistre le choix (et pose le cookie), donc il n'y a aucun état
+            intermédiaire où la mesure tournerait sans consentement (issue #6).
+        --}}
         <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button onclick="blogrGdprAcceptAnalytics()" style="padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; background: var(--color-primary, #2563eb); color: #ffffff; font-size: 14px; font-weight: 500;">
-                {{ __('blogr-gdpr::messages.accept') }}
-            </button>
-            <button onclick="blogrGdprDeclineAnalytics()" style="padding: 8px 20px; border: 1px solid {{ $isDark ? '#555' : '#ccc' }}; border-radius: 4px; cursor: pointer; background: transparent; color: inherit; font-size: 14px;">
-                {{ __('blogr-gdpr::messages.decline') }}
-            </button>
+            <form method="POST" action="{{ route('gdpr.consent') }}" style="margin: 0;">
+                @csrf
+                <input type="hidden" name="consent_type" value="analytics">
+                <button type="submit" style="padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer; background: var(--color-primary, #2563eb); color: #ffffff; font-size: 14px; font-weight: 500;">
+                    {{ __('blogr-gdpr::messages.accept') }}
+                </button>
+            </form>
+            <form method="POST" action="{{ route('gdpr.withdraw') }}" style="margin: 0;">
+                @csrf
+                <input type="hidden" name="consent_type" value="analytics">
+                <button type="submit" style="padding: 8px 20px; border: 1px solid {{ $isDark ? '#555' : '#ccc' }}; border-radius: 4px; cursor: pointer; background: transparent; color: inherit; font-size: 14px;">
+                    {{ __('blogr-gdpr::messages.decline') }}
+                </button>
+            </form>
         </div>
     </div>
 </div>
+@endif
 
 @push('scripts')
 <script>
-window.blogrGdprAcceptAnalytics = function() {
-    localStorage.setItem('blogr_gdpr_analytics', 'accepted');
-    document.getElementById('blogr-gdpr-analytics-consent').style.display = 'none';
-    blogrGdprShowAnalytics();
-    fetch('{{ route('gdpr.consent') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ consent_type: 'analytics' })
-    });
+{{--
+    Ces fonctions sont appelées par la fenêtre « gérer mes préférences » du bandeau.
+    Elles n'existaient nulle part : accepter la mesure enregistrait un choix et
+    laissait la mesure tourner (issue #6). Elles passent maintenant par le serveur,
+    qui pose le cookie et recharge la page — la balise est alors servie, ou pas.
+--}}
+window.blogrGdprAcceptAnalytics = function () {
+    window.blogrGdprPostAnalyticsChoice('{{ route('gdpr.consent') }}');
 };
 
-window.blogrGdprDeclineAnalytics = function() {
-    localStorage.setItem('blogr_gdpr_analytics', 'declined');
-    document.getElementById('blogr-gdpr-analytics-consent').style.display = 'none';
-    blogrGdprHideAnalytics();
-    fetch('{{ route('gdpr.withdraw') }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ consent_type: 'analytics' })
-    });
+window.blogrGdprDeclineAnalytics = function () {
+    window.blogrGdprPostAnalyticsChoice('{{ route('gdpr.withdraw') }}');
+};
+
+window.blogrGdprShowAnalytics = window.blogrGdprAcceptAnalytics;
+window.blogrGdprHideAnalytics = window.blogrGdprDeclineAnalytics;
+
+window.blogrGdprPostAnalyticsChoice = function (url) {
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+
+    var csrf = document.createElement('input');
+    csrf.type = 'hidden';
+    csrf.name = '_token';
+    csrf.value = '{{ csrf_token() }}';
+    form.appendChild(csrf);
+
+    var type = document.createElement('input');
+    type.type = 'hidden';
+    type.name = 'consent_type';
+    type.value = 'analytics';
+    form.appendChild(type);
+
+    document.body.appendChild(form);
+    form.submit();
 };
 </script>
 @endpush

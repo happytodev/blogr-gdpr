@@ -4,6 +4,7 @@ namespace Happytodev\BlogrGdpr\Http\Controllers;
 
 use Happytodev\BlogrGdpr\Models\GdprRequest;
 use Happytodev\BlogrGdpr\Notifications\DataRequestNotification;
+use Happytodev\BlogrGdpr\Services\AnalyticsConsentCookie;
 use Happytodev\BlogrGdpr\Services\ConsentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,7 +42,15 @@ class GdprController extends Controller
 
         $this->consentService->giveConsent($validated['consent_type'], $validated['consent_data'] ?? []);
 
-        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_stored')));
+        $response = $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_stored')));
+
+        // Le choix part aussi dans un cookie : c'est ce qui permet au serveur de
+        // servir — ou non — la balise du fournisseur (issue #6).
+        if ($validated['consent_type'] === 'analytics') {
+            $response = AnalyticsConsentCookie::accept($response);
+        }
+
+        return $response;
     }
 
     public function withdrawConsent(Request $request): RedirectResponse
@@ -52,7 +61,13 @@ class GdprController extends Controller
 
         $this->consentService->withdrawConsent($validated['consent_type']);
 
-        return $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_withdrawn')));
+        $response = $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_withdrawn')));
+
+        if ($validated['consent_type'] === 'analytics') {
+            $response = AnalyticsConsentCookie::decline($response);
+        }
+
+        return $response;
     }
 
     public function showDataExport(): View
