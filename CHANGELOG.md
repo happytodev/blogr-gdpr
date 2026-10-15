@@ -2,6 +2,13 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v2.1.1 - 2026-10-15
+
+### 📖 Documentation
+
+- **Comments in English**: the comments added in 2.1.0 were written in French. They are in English
+  now, like the rest of the package and like every message on its GitHub side.
+
 ## v2.1.0 - 2026-10-15
 
 ### 🐛 Bug Fixes

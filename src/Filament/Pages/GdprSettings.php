@@ -371,9 +371,9 @@ class GdprSettings extends Page
             ],
         ];
 
-        // Les réglages vont en base : ils survivent aux déploiements, aux retours
-        // en arrière et à un config:clear. Le fichier de configuration ne sert plus
-        // que de repli, tant que la table n'a pas été migrée.
+        // The settings go into the database: they survive deployments, rollbacks and
+        // a config:clear. The configuration file is only a fallback now, until the
+        // table has been migrated.
         $stored = $this->persistSettings($data);
 
         Artisan::call('config:clear');
@@ -415,13 +415,12 @@ class GdprSettings extends Page
             return null;
         }
 
-        // Un null veut dire « non renseigné » : le stocker rendrait la valeur du
-        // fichier inatteignable, et un formulaire partiellement rempli viderait
-        // des réglages.
+        // A null means "not filled in": storing it would make the file's value
+        // unreachable, and a partially filled form would wipe settings.
         $values = array_filter(Arr::dot($data), fn ($value) => $value !== null);
         $settings->put($values);
 
-        // La page se rend depuis la configuration vivante : on applique tout de suite.
+        // The page renders from the live configuration: apply at once.
         foreach ($values as $key => $value) {
             config()->set("blogr-gdpr.{$key}", $value);
         }

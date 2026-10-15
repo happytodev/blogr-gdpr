@@ -3,10 +3,10 @@
 use Happytodev\BlogrGdpr\Http\Controllers\GdprController;
 use Illuminate\Support\Facades\Route;
 
-// Les pages s'affichent dans la langue du site : les deux formulaires d'accès et
-// de suppression sont donc aussi servis sous /{locale}/gdpr/… (issue #7). Les
-// adresses sans préfixe restent en place : les liens déjà publiés, les envois de
-// formulaires et le JavaScript du bandeau continuent de fonctionner tels quels.
+// The forms are displayed in the site's language: the data access and erasure
+// forms are therefore also served under /{locale}/gdpr/… (issue #7). The
+// prefixless addresses stay in place: published links, form posts and the
+// banner's JavaScript keep working unchanged.
 $availableLocales = config('blogr.locales.available', []);
 $localeConstraint = $availableLocales === []
     ? '[a-z]{2}'

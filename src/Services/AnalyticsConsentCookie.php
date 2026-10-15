@@ -7,16 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
- * Le choix de mesure d'audience, côté serveur.
+ * The analytics choice, server side.
  *
- * Le consentement n'était conservé que dans le `localStorage` du visiteur : le
- * serveur ne pouvait donc pas savoir qu'un visiteur avait refusé, et servait la
- * balise du fournisseur à tout le monde. Enregistrer le choix **aussi** dans un
- * cookie rend le blocage possible à la source, sans dépendre du JavaScript : soit
- * la page part sans la balise, soit elle part avec (issue #6).
+ * The consent was kept in the visitor's `localStorage` only: the server could
+ * therefore not know that a visitor had declined, and served the provider's
+ * tag to everyone. Recording the choice **also** in a cookie makes the
+ * blocking possible at the source, without relying on JavaScript: either the
+ * page goes out without the tag, or it goes out with it (issue #6).
  *
- * Le cookie ne sert qu'à ça. Il est posé par le serveur sur l'appel de
- * consentement ou de retrait, jamais par le chargement d'une page.
+ * The cookie serves that purpose only. It is set by the server on the consent
+ * or withdrawal call, never when a page is loaded.
  */
 class AnalyticsConsentCookie
 {
@@ -27,8 +27,8 @@ class AnalyticsConsentCookie
     public const DECLINED = 'declined';
 
     /**
-     * Six mois : la durée d'une preuve de consentement habituelle. Le retrait la
-     * supprime, et le visiteur peut refuser à nouveau.
+     * Six months: the usual lifetime of a consent proof. Withdrawal removes it,
+     * and the visitor can decline again.
      */
     public const LIFETIME_MINUTES = 60 * 24 * 180;
 

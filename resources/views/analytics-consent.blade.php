@@ -12,8 +12,8 @@
         ? 'bottom: 0; left: 0; right: 0; border-top: 1px solid ' . $borderColor . ';'
         : 'top: 0; left: 0; right: 0; border-bottom: 1px solid ' . $borderColor . ';';
 
-    // Le cookie dit si le visiteur a déjà accepté : dans ce cas, la balise du
-    // fournisseur est servie et cette bande n'a plus rien à demander.
+    // The cookie tells whether the visitor already accepted: if so, the
+    // provider's tag is served and this bar has nothing left to ask.
     $accepted = $accepted ?? false;
 @endphp
 

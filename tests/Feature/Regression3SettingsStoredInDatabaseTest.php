@@ -5,8 +5,8 @@ use Happytodev\BlogrGdpr\Services\SettingsRepository;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Issue #3 — les réglages de l'admin doivent vivre en base, pas dans le fichier
- * de configuration (remplacé à chaque déploiement).
+ * Issue #3 — the admin settings must live in the database, not in the config
+ * file (replaced at every deployment by the repository's copy).
  */
 beforeEach(function () {
     app(SettingsRepository::class)->flush();
@@ -22,17 +22,17 @@ it('regression_3_stores_an_admin_save_in_the_database_instead_of_the_config_file
     $page->cookie_consent_enabled = false;
     $page->save();
 
-    // Un ligne par réglage, sous son chemin de configuration pointé.
+    // One row per setting, under its dotted configuration path.
     expect(DB::table(SettingsRepository::TABLE)->where('key', 'dpo.email')->value('value'))
         ->toBe('"privacy@example.org"')
         ->and(DB::table(SettingsRepository::TABLE)->where('key', 'cookie_consent.enabled')->value('value'))
         ->toBe('false');
 
-    // Et les valeurs s'appliquent tout de suite, donc la page reflète l'enregistrement.
+    // And the values apply at once, so the page reflects the save.
     expect(config('blogr-gdpr.dpo.email'))->toBe('privacy@example.org')
         ->and(config('blogr-gdpr.cookie_consent.enabled'))->toBeFalse();
 
-    // Le fichier de configuration n'est plus réécrit.
+    // The configuration file is no longer rewritten.
     expect(file_exists($configFile) ? md5_file($configFile) : null)->toBe($before);
 });
 
@@ -56,7 +56,7 @@ it('regression_3_applies_the_stored_settings_on_top_of_the_configuration', funct
 });
 
 it('regression_3_never_stores_a_null_value', function () {
-    // Une page enregistrée sans être montée porte des valeurs nulles.
+    // A page saved without being mounted carries null values.
     (new GdprSettings)->save();
 
     $rows = DB::table(SettingsRepository::TABLE)->pluck('value', 'key');
@@ -74,9 +74,9 @@ it('regression_3_does_not_bake_the_overrides_into_the_compiled_configuration', f
 
     config(['blogr-gdpr.consent_log.retention_days' => 365]);
 
-    // `php artisan config:cache` démarre l'application avant de figer la
-    // configuration : y appliquer les surcharges les graverait dans le fichier
-    // compilé, qui passerait alors devant la table.
+    // `php artisan config:cache` boots the application before freezing the
+    // configuration: applying the overrides there would bake them into the
+    // compiled file, which would then take precedence over the table.
     $_SERVER['argv'] = ['artisan', 'config:cache'];
 
     try {
@@ -114,7 +114,7 @@ it('regression_3_falls_back_to_the_config_file_while_the_table_is_missing', func
 
     $page->save();
 
-    // En environnement de test, le repli applique les valeurs en mémoire.
+    // In the test environment, the fallback applies the values in memory.
     expect(config('blogr-gdpr.dpo.email'))->toBe('privacy@example.org')
         ->and(DB::table(SettingsRepository::TABLE)->count())->toBe(0);
 });

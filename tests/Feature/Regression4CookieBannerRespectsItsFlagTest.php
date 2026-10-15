@@ -1,17 +1,17 @@
 <?php
 
 /**
- * Issue #4 — le bandeau cookies doit disparaître quand son propre drapeau est
- * éteint (`cookie_consent.enabled`), et pas seulement quand on éteint tout le plugin.
+ * Issue #4 — the cookie banner must disappear when its own flag is off
+ * (`cookie_consent.enabled`), and not only when the whole plugin is off.
  *
- * Le bandeau est poussé dans la pile `cookie-consent` de la mise en page par un
- * compositeur de vues : on le mesure en rendant la mise en page, la seule lecture
- * qui prouve que le drapeau est réellement consulté.
+ * The banner is pushed into the layout's `cookie-consent` stack by a view
+ * composer: we measure it by rendering the layout, the only reading that
+ * proves the flag is really consulted.
  */
 function renderBlogLayout(): string
 {
-    // La mise en page n'a besoin que du bandeau : on éteint ce qui réclame des
-    // routes que l'environnement de test ne monte pas (flux RSS, frontend Blogr).
+    // The layout only needs the banner: we turn off what requires routes the
+    // test environment does not mount (RSS feed, Blogr frontend).
     config([
         'blogr.rss.enabled' => false,
         'blogr.ui.navigation.show_theme_switcher' => false,
@@ -41,8 +41,8 @@ it('regression_4_does_not_push_the_manage_preferences_link_without_a_consent_int
         'blogr-gdpr.analytics_consent.enabled' => false,
     ]);
 
-    // Le lien appelle la fenêtre de préférences, qui vit dans le bandeau : sans
-    // interface, il n'ouvre rien (issue #4).
+    // The link calls the preferences window, which lives in the banner: with
+    // no interface, it opens nothing (issue #4).
     expect(renderBlogLayout())->not->toContain('blogrGdprOpenPreferences');
 });
 

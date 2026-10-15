@@ -28,14 +28,13 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
         $this->app->singleton(BlogrGdprPlugin::class, fn () => new BlogrGdprPlugin);
 
-        // Réglages enregistrés depuis l'admin (appliqués au démarrage, plus bas)
+        // Settings saved from the admin (applied at boot, further down)
         $this->app->singleton(SettingsRepository::class);
 
-        // Les pages d'accès et de suppression sont servies dans la langue du site,
-        // sous /{locale}/gdpr/… (issue #7). Encore faut-il que la route « attrape-
-        // tout » des pages CMS de Blogr — {locale}/{slug} — laisse passer ce
-        // préfixe : Blogr construit son motif à partir de `blogr.cms.reserved_slugs`
-        // pendant son boot(), qui suit ce register().
+        // The access and erasure forms are served in the site's language, under
+        // /{locale}/gdpr/… (issue #7). Blogr's CMS catch-all route — {locale}/{slug}
+        // — must let that prefix through: Blogr builds its pattern from
+        // `blogr.cms.reserved_slugs` during its boot(), which follows this register().
         $reservedSlugs = config('blogr.cms.reserved_slugs');
 
         if (is_array($reservedSlugs) && ! in_array('gdpr', $reservedSlugs, true)) {
@@ -55,8 +54,8 @@ class BlogrGdprServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Les réglages de l'admin (table blogr_gdpr_settings) passent avant tout
-        // ce qui lit la configuration : compositeurs de vues, extensions, pages.
+        // The admin settings (blogr_gdpr_settings table) come before everything
+        // that reads the configuration: view composers, extensions, pages.
         $this->app->make(SettingsRepository::class)->applyToConfig();
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'blogr-gdpr');
@@ -159,9 +158,9 @@ class BlogrGdprServiceProvider extends ServiceProvider
         $this->registerDpoComposer();
 
         View::composer('blogr::layouts.blog', function ($view) {
-            // `blogr-gdpr.enabled` éteint tout le plugin ; `cookie_consent.enabled`
-            // n'éteint que le bandeau — un site dont la mesure d'audience ne pose
-            // aucun cookie n'a pas à en afficher un (issue #4).
+            // `blogr-gdpr.enabled` turns the whole plugin off; `cookie_consent.enabled`
+            // only turns the banner off — a site whose measurement sets no cookie has no
+            // reason to display one (issue #4).
             if (! config('blogr-gdpr.enabled') || ! config('blogr-gdpr.cookie_consent.enabled', true) || ! $this->isExtensionEnabled()) {
                 return;
             }
@@ -180,10 +179,10 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 return;
             }
 
-            // Tant que le visiteur n'a pas accepté, Blogr ne sert pas la balise du
-            // fournisseur : le blocage se fait donc ici, à la source, et pas par du
-            // JavaScript qui arriverait trop tard (issue #6). Le choix vit dans un
-            // cookie, pas seulement dans le `localStorage` du navigateur.
+            // Until the visitor accepts, Blogr does not serve the provider's tag: the
+            // blocking happens here, at the source, and not through JavaScript that
+            // would arrive too late (issue #6). The choice lives in a cookie, not only
+            // in the browser's `localStorage`.
             $accepted = AnalyticsConsentCookie::hasAccepted(request());
 
             if (! $accepted) {
@@ -226,10 +225,9 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 );
             }
 
-            // Le lien « gérer mes préférences » n'a de sens que s'il existe une
-            // interface de consentement pour l'accueillir : sans bandeau ni encart
-            // de mesure, il n'ouvrait rien et levait une erreur dans la console
-            // (issue #4).
+            // The "manage my preferences" link only makes sense when there is a consent
+            // interface to welcome it: with no banner and no measurement panel, it opened
+            // nothing and raised a console error (issue #4).
             if (config('blogr-gdpr.cookie_consent.enabled') || config('blogr-gdpr.analytics_consent.enabled')) {
                 $view->getFactory()->startPush(
                     'footer-links',
@@ -314,11 +312,10 @@ class BlogrGdprServiceProvider extends ServiceProvider
     }
 
     /**
-     * Les blocs d'une traduction portent-ils le HTML que la 2.0.0 y écrivait ?
+     * Do a translation's blocks carry the HTML that 2.0.0 wrote into them?
      *
-     * Sert à réparer les pages déjà créées : sans cela, corriger le gabarit ne
-     * changeait rien pour les sites installés (issue #5).
-     *
+     * It serves to repair pages already created: without it, fixing the template
+     * changed nothing for installed sites (issue #5).
      * @param  array<int, array<string, mixed>>|null  $blocks
      */
     protected function blocksWereGeneratedAsHtml(?array $blocks): bool
@@ -384,9 +381,9 @@ class BlogrGdprServiceProvider extends ServiceProvider
                 if ($translation) {
                     $hasOldContent = ! empty($translation->content) && empty($translation->blocks);
 
-                    // Une page écrite par la 2.0.0 (ou une version antérieure) porte des
-                    // balises HTML dans ses blocs : elle s'affiche avec ses balises en
-                    // clair (issue #5). On la remet en markdown.
+                    // A page written by 2.0.0 (or an earlier version) carries HTML tags in its
+                    // blocks: it displays its tags as plain text (issue #5). We put it back to
+                    // markdown.
                     if ($hasOldContent || $this->blocksWereGeneratedAsHtml($translation->blocks)) {
                         $translation->update([
                             'content' => null,
@@ -410,20 +407,20 @@ class BlogrGdprServiceProvider extends ServiceProvider
     }
 
     /**
-     * Découpe le gabarit en un bloc « content » par section.
+     * Split the template into one "content" block per section.
      *
-     * Le gabarit est du **markdown**, et pas du HTML : le bloc `content` de Blogr
-     * passe son champ par `MarkdownHelper`, dont l'environnement CommonMark est
-     * configuré avec `html_input => 'escape'` (contre le XSS). Du HTML s'y affiche
-     * donc en clair — c'était le défaut de la 2.0.0 (issue #5).
+     * The template is **markdown**, not HTML: a Blogr content block passes its
+     * field through `MarkdownHelper`, whose CommonMark environment is configured
+     * with `html_input => 'escape'` (against XSS). HTML therefore shows as plain
+     * text there — that was the 2.0.0 defect (issue #5).
      */
     protected function buildPrivacyPolicyBlocks(string $markdown): array
     {
         $blocks = [];
 
         $sections = preg_split('/^##\s+/m', $markdown);
-        // Un gabarit peut commencer par du texte avant son premier titre : ce
-        // premier morceau ne doit pas être transformé en titre.
+        // A template may start with text before its first heading: that first chunk
+        // must not be turned into a heading.
         $firstChunkIsAHeading = str_starts_with(ltrim($markdown), '## ');
 
         foreach ($sections as $index => $section) {

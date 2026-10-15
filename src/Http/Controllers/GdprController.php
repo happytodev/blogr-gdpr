@@ -44,8 +44,8 @@ class GdprController extends Controller
 
         $response = $this->applySecurityHeaders(back()->with('success', __('blogr-gdpr::messages.consent_stored')));
 
-        // Le choix part aussi dans un cookie : c'est ce qui permet au serveur de
-        // servir — ou non — la balise du fournisseur (issue #6).
+        // The choice also goes into a cookie: that is what lets the server serve —
+        // or not — the provider's tag (issue #6).
         if ($validated['consent_type'] === 'analytics') {
             $response = AnalyticsConsentCookie::accept($response);
         }

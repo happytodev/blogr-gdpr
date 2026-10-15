@@ -31,7 +31,7 @@ class BlogrGdprPlugin implements BlogrExtension, FilamentPlugin
 
     public function getVersion(): string
     {
-        return '2.1.0';
+        return '2.1.1';
     }
 
     public function getAuthor(): string

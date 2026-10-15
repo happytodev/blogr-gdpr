@@ -5,13 +5,13 @@ use Happytodev\BlogrGdpr\BlogrGdprServiceProvider;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Issue #5 — la page de confidentialité générée s'affichait avec ses balises en
- * clair : le plugin fabriquait des blocs HTML alors que le champ `content` d'un
- * bloc Blogr est du **markdown échappé** (`html_input => 'escape'`).
+ * Issue #5 — the generated privacy policy displayed its own markup as text:
+ * the plugin built HTML blocks while a Blogr content block holds **escaped**
+ * **markdown** (`html_input => 'escape'`).
  */
 function provider(): BlogrGdprServiceProvider
 {
-    // Le provider n'est pas un service résolvable par le conteneur : on l'instancie.
+    // The provider is not a resolvable service: we instantiate it.
     return new BlogrGdprServiceProvider(app());
 }
 
@@ -25,8 +25,8 @@ function providerMethod(string $name): ReflectionMethod
 
 function cmsTables(): void
 {
-    // Les tests du plugin ne chargent pas les migrations de Blogr : on pose les
-    // deux tables du CMS dont la page de confidentialité a besoin.
+    // The plugin's tests do not load Blogr's migrations: we create the two CMS
+    // tables the privacy policy needs.
     Schema::create('cms_pages', function ($table) {
         $table->id();
         $table->string('slug')->unique();
@@ -77,8 +77,8 @@ it('regression_5_generates_sections_that_render_as_html', function () {
 it('regression_5_splits_every_section_of_the_template', function () {
     $blocks = providerMethod('buildPrivacyPolicyBlocks')->invoke(provider(), templateContent());
 
-    // Le gabarit français compte onze sections numérotées, et il commence par son
-    // premier titre : aucune section ne doit se retrouver sans son titre.
+    // The French template has eleven numbered sections, and it starts with its
+    // first heading: no section must end up without one.
     expect($blocks)->toHaveCount(11)
         ->and($blocks[0]['data']['content'])->toStartWith('## 1. Introduction')
         ->and($blocks[0]['type'])->toBe('content');
@@ -87,8 +87,8 @@ it('regression_5_splits_every_section_of_the_template', function () {
 it('regression_5_repairs_a_page_generated_by_2_0_0', function () {
     cmsTables();
 
-    // Une page créée par la 2.0.0 : ses blocs portent du HTML, donc la page
-    // s'affiche avec ses balises. Le plugin doit la remettre en markdown.
+    // A page created by 2.0.0: its blocks carry HTML, so the page shows its tags.
+    // The plugin must put it back to markdown.
     $page = CmsPage::firstOrCreate(
         ['slug' => 'privacy-policy'],
         ['template' => 'default', 'is_published' => true, 'is_homepage' => false, 'default_locale' => 'en'],

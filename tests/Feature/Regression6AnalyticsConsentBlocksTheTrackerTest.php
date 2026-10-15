@@ -6,11 +6,11 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Testing\TestResponse;
 
 /**
- * Issue #6 — le consentement à la mesure d'audience était enregistré (dans le
- * `localStorage` du visiteur) mais la balise du fournisseur partait de toute
- * façon : le choix ne bloquait rien. Le serveur ne pouvait pas le savoir, faute
- * de cookie. Et les fonctions que les boutons appellent (`blogrGdprShowAnalytics`,
- * `blogrGdprHideAnalytics`) n'étaient définies nulle part.
+ * Issue #6 — the analytics consent was recorded (in the visitor's
+ * `localStorage`) but the provider's tag went out anyway: the choice blocked
+ * nothing. The server could not know about it, for want of a cookie. And the
+ * functions the buttons call (`blogrGdprShowAnalytics`,
+ * `blogrGdprHideAnalytics`) were defined nowhere.
  */
 beforeEach(function () {
     config([
@@ -28,8 +28,8 @@ function trackerPage(?string $cookieChoice = null): string
     $cookies = $cookieChoice ? [AnalyticsConsentCookie::NAME => $cookieChoice] : [];
     app()->instance('request', Request::create('/', 'GET', [], $cookies));
 
-    // Rendre une vue de paquet en isolation laisse parfois un tampon de sortie
-    // ouvert dans le harnais : on le referme pour ne pas marquer le test « risqué ».
+    // Rendering a package view in isolation sometimes leaves an output buffer
+    // open in the harness: we close it so the test is not marked "risky".
     $bufferLevel = ob_get_level();
 
     $html = Blade::render(

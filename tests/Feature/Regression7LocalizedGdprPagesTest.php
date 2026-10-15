@@ -3,10 +3,10 @@
 use Happytodev\BlogrGdpr\Tests\TestCase;
 
 /**
- * Issue #7 — les formulaires d'accès et de suppression étaient toujours rendus
- * dans la langue par défaut, leurs adresses ne portant pas la langue. Ils sont
- * maintenant servis aussi sous /{locale}/gdpr/…, et les adresses sans préfixe
- * restent en place pour ne casser aucun lien déjà publié.
+ * Issue #7 — the access and erasure forms were always rendered in the default
+ * language, their addresses carrying none. They are now also served under
+ * /{locale}/gdpr/…, and the prefixless addresses stay in place so that no
+ * published link breaks.
  */
 class Regression7LocalizedGdprPagesTest extends TestCase
 {
@@ -20,13 +20,13 @@ class Regression7LocalizedGdprPagesTest extends TestCase
             'available' => ['en', 'fr'],
         ]);
 
-        // La route « attrape-tout » des pages CMS doit exister pendant ce test :
-        // c'est elle qui avalait /fr/gdpr/… avant que le plugin ne réserve le
-        // préfixe. Sans elle, le test ne prouverait rien.
+        // Blogr's CMS catch-all route must exist during this test: it is the one that
+        // swallowed /fr/gdpr/… before the plugin reserved the prefix. Without it, the
+        // test would prove nothing.
         $app['config']->set('blogr.cms.enabled', true);
 
-        // Les vues du plugin étendent la mise en page de Blogr, qui référence les
-        // routes du blog (les tests du plugin ne les activent pas par défaut).
+        // The plugin's views extend Blogr's layout, which references the blog routes
+        // (the plugin's tests do not enable them by default).
         $app['config']->set('blogr.route.frontend.enabled', true);
     }
 
@@ -42,7 +42,7 @@ class Regression7LocalizedGdprPagesTest extends TestCase
 
         $this->get('/fr/gdpr/data-erasure')
             ->assertOk()
-            // assertSee échappe l'apostrophe, comme le fait le rendu de la vue.
+            // assertSee escapes the apostrophe, as the view rendering does.
             ->assertSee("Demander l'effacement des données");
     }
 
