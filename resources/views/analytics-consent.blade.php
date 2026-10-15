@@ -38,9 +38,9 @@
         @endif
 
         {{--
-            Deux formulaires plutôt que deux boutons JavaScript : c'est le serveur
-            qui enregistre le choix (et pose le cookie), donc il n'y a aucun état
-            intermédiaire où la mesure tournerait sans consentement (issue #6).
+            Two forms rather than two JavaScript buttons: the server records the choice
+            (and sets the cookie), so there is no intermediate state in which the
+            measurement would run without consent (issue #6).
         --}}
         <div style="display: flex; gap: 8px; margin-top: 10px;">
             <form method="POST" action="{{ route('gdpr.consent') }}" style="margin: 0;">
@@ -65,10 +65,10 @@
 @push('scripts')
 <script>
 {{--
-    Ces fonctions sont appelées par la fenêtre « gérer mes préférences » du bandeau.
-    Elles n'existaient nulle part : accepter la mesure enregistrait un choix et
-    laissait la mesure tourner (issue #6). Elles passent maintenant par le serveur,
-    qui pose le cookie et recharge la page — la balise est alors servie, ou pas.
+    These functions are called by the banner's "manage my preferences" window. They
+    were defined nowhere: accepting the measurement recorded a choice and let the
+    measurement run (issue #6). They now go through the server, which sets the cookie
+    and reloads the page — the tag is then served, or not.
 --}}
 window.blogrGdprAcceptAnalytics = function () {
     window.blogrGdprPostAnalyticsChoice('{{ route('gdpr.consent') }}');

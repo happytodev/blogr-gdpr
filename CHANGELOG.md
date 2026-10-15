@@ -2,6 +2,14 @@
 
 All notable changes to `blogr-gdpr` will be documented in this file.
 
+## v2.1.2 - 2026-10-15
+
+### 📖 Documentation
+
+- **Comments in English, completed**: the 2.1.1 pass missed two comment blocks in the analytics
+  consent view, which were still in French. They are in English now. The sweep was redone block by
+  block rather than line by line, which is precisely what had let those two through.
+
 ## v2.1.1 - 2026-10-15
 
 ### 📖 Documentation
